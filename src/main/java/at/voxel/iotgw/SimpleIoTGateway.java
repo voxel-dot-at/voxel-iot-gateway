@@ -1,13 +1,9 @@
 package at.voxel.iotgw;
 
-
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.List;
-import java.io.File;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -57,12 +53,24 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import at.voxel.iotgw.cli.IoTGatewayCli;
+import at.voxel.iotgw.servlet.ClientServlet;
+import at.voxel.iotgw.servlet.EventServlet;
+import at.voxel.iotgw.servlet.ObjectSpecServlet;
 
 /**
  * Simple IoT Gateway implementation that demonstrates the basic structure
  * with LWM2M server functionality
  */
 public class SimpleIoTGateway {
+
+    static {
+        // Define a default logback.configurationFile
+        String property = System.getProperty("logback.configurationFile");
+        if (property == null) {
+            System.setProperty("logback.configurationFile", "logback-config.xml");
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SimpleIoTGateway.class);
     private static final String CF_CONFIGURATION_FILENAME = "Californium3.server.properties";
     private static final String CF_CONFIGURATION_HEADER = "VoXel IoT GW - " + Configuration.DEFAULT_HEADER;
@@ -74,6 +82,7 @@ public class SimpleIoTGateway {
         System.out.println("Running with basic dependencies...");
 
         IoTGatewayCli cli = new IoTGatewayCli();
+
         CommandLine command = new CommandLine(cli).setTrimQuotes(true)
                 .setParameterExceptionHandler(new ShortErrorMessageHandler());
         // Handle exit code error
@@ -92,13 +101,20 @@ public class SimpleIoTGateway {
             // Setup MQTT client
             MqttClient mqttClient = setupMqttClient();
 
-            lwm2mServer.start();
-
             // In a real implementation, this would:
             // 1. Initialize MQTT connection
             // 2. Set up CoAP server
             // 3. Handle device registration
             // 4. Process IoT data
+
+            lwm2mServer.start();
+
+            Server webServer = null;
+            if (cli.main.enableWebServer) {
+                System.out.println("Starting webServer");
+                webServer = createJettyServer(cli, lwm2mServer);
+                webServer.start();
+            }
 
             System.out.println("Gateway initialized successfully");
 
@@ -107,7 +123,11 @@ public class SimpleIoTGateway {
                 System.out.println("Gateway running... Press Ctrl+C to stop");
                 TimeUnit.MINUTES.sleep(1);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                // Thread.currentThread().interrupt();
+                LOG.debug("interrupted.");
+            }
+            if (webServer != null) {
+                webServer.stop();
             }
 
             // Stop the server when shutting down
@@ -267,6 +287,62 @@ public class SimpleIoTGateway {
         builder.setEndpointsProviders(endpointsBuilder.build(), javacoapEndpointsProvider, javacoapTcpEndpointsProvider,
                 javacoapsTcpEndpointsProvider);
         return builder.build();
+    }
+
+    private static Server createJettyServer(IoTGatewayCli cli, LeshanServer lwServer) {
+        // Now prepare Jetty
+        InetSocketAddress jettyAddr;
+        if (cli.main.webhost == null) {
+            jettyAddr = new InetSocketAddress(cli.main.webPort);
+        } else {
+            jettyAddr = new InetSocketAddress(cli.main.webhost, cli.main.webPort);
+        }
+        Server server = new Server(jettyAddr);
+        ServletContextHandler root = new ServletContextHandler("/", true, false);
+        server.setHandler(root);
+
+        // Create static Servlet
+        DefaultServlet staticServelt = new DefaultServlet();
+        ServletHolder staticHolder = new ServletHolder(staticServelt);
+        staticHolder.setInitParameter("baseResource",
+                SimpleIoTGateway.class.getClassLoader().getResource("webapp").toExternalForm());
+        staticHolder.setInitParameter("gzip", "true");
+        staticHolder.setInitParameter("cacheControl", "public, max-age=31536000");
+        root.addServlet(staticHolder, "/");
+
+        // Create REST API Servlets
+        EventServlet eventServlet = new EventServlet(lwServer);
+        ServletHolder eventServletHolder = new ServletHolder(eventServlet);
+        root.addServlet(eventServletHolder, "/api/event/*");
+
+        ServletHolder clientServletHolder = new ServletHolder(new ClientServlet(lwServer, eventServlet));
+        root.addServlet(clientServletHolder, "/api/clients/*");
+
+        ServletHolder securityServletHolder;
+        if (cli.identity.isRPK()) {
+            securityServletHolder = new ServletHolder(new SecurityServlet(
+                    (EditableSecurityStore) lwServer.getSecurityStore(), cli.identity.getPublicKey()));
+        } else {
+            securityServletHolder = new ServletHolder(new SecurityServlet(
+                    (EditableSecurityStore) lwServer.getSecurityStore(), cli.identity.getCertChain()[0]));
+        }
+        root.addServlet(securityServletHolder, "/api/security/*");
+
+        ServletHolder serverServletHolder;
+        if (cli.identity.isRPK()) {
+            serverServletHolder = new ServletHolder(
+                    new ServerServlet(lwServer.getEndpoints(), cli.identity.getPublicKey()));
+        } else {
+            serverServletHolder = new ServletHolder(
+                    new ServerServlet(lwServer.getEndpoints(), cli.identity.getCertChain()[0]));
+        }
+        root.addServlet(serverServletHolder, "/api/server/*");
+
+        ServletHolder objectSpecServletHolder = new ServletHolder(
+                new ObjectSpecServlet(lwServer.getModelProvider(), lwServer.getRegistrationService()));
+        root.addServlet(objectSpecServletHolder, "/api/objectspecs/*");
+
+        return server;
     }
 
     /**

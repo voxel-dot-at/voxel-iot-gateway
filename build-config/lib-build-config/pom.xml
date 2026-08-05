@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Copyright (c) 2013-2022 Sierra Wireless and others.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+and Eclipse Distribution License v1.0 which accompany this distribution.
+
+The Eclipse Public License is available at
+   http://www.eclipse.org/legal/epl-v20.html
+and the Eclipse Distribution License is available at
+   http://www.eclipse.org/org/documents/edl-v10.html.
+
+Contributors:
+    Sierra Wireless - initial API and implementation
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.leshan</groupId>
+    <artifactId>leshan-build-and-release-config</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <relativePath>../build-and-release-config/pom.xml</relativePath>
+  </parent>
+  <artifactId>lib-build-config</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Leshan shared library build config</name>
+  <description>Shared Maven configuration for all Leshan library modules</description>
+
+  <build>
+    <plugins>
+      <!--  Check that we don't use Java API which is not available for android -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <configuration>
+          <signature>
+            <groupId>net.sf.androidscents.signature</groupId>
+            <artifactId>android-api-level-26</artifactId>
+            <version>8.0.0_r2</version>
+          </signature>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Check API respects semantic versioning -->
+      <plugin>
+        <groupId>org.revapi</groupId>
+        <artifactId>revapi-maven-plugin</artifactId>
+        <configuration>
+          <versionFormat>^\d+.\d+.\d+$</versionFormat>
+          <analysisConfiguration>
+            <revapi.versions>
+              <enabled>true</enabled>
+              <onAllowed>
+                <criticality>documented</criticality>
+              </onAllowed>
+            </revapi.versions>
+            <revapi.differences>
+              <ignore>true</ignore>
+              <differences>
+                <item>
+                  <regex>true</regex>
+                  <code>java.class.externalClassExposedInAPI</code>
+                  <newArchive>.*</newArchive>
+                  <justification>We do not consider exoposing external class as an issue. Most of our code allow customization which lead to expose underlaying API.</justification>
+                </item>
+                <item>
+                  <regex>true</regex>
+                  <code>java.class.nonPublicPartOfAPI</code>
+                  <new>class com.fasterxml.jackson.databind.type.TypeParser.MyTokenizer</new>
+                  <justification>It sounds to be a bug in jackson API : https://github.com/FasterXML/jackson-databind/issues/4613</justification>
+                </item>
+                <item>
+                  <regex>true</regex>
+                  <code>java.class.nonPublicPartOfAPI</code>
+                  <new>class org.eclipse.californium.scandium.dtls.DTLSFlight.EpochMessage</new>
+                  <justification>It sounds to be a bug in californium API : https://github.com/eclipse-californium/californium/issues/2259</justification>
+                </item>
+                <item>
+                  <regex>true</regex>
+                  <code>java.class.nonPublicPartOfAPI</code>
+                  <new>class com.mbed.coap.packet.RawOption</new>
+                  <justification>It sounds to be a bug in javacoap API : https://github.com/open-coap/java-coap/issues/86</justification>
+                </item>
+              </differences>
+            </revapi.differences>
+            <!--revapi.filter>
+              <elements>
+                <exclude>
+                  <item>
+                    <Californium is exclude from 
+                         API check as it does not have clear definition of its API and do not really 
+                         respect Semantic versioning : 
+                         - https://github.com/eclipse/californium/issues/1159 
+                         - https://github.com/eclipse/californium/issues/1166>
+                    <matcher>java-package</matcher>
+                    <match>/org\.eclipse\.californium(\..*)?/</match>
+                  </item>
+                </exclude>
+              </elements>
+            </revapi.filter-->
+          </analysisConfiguration>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--  Create OSGI bundle for Leshan libraries -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <_exportcontents>*</_exportcontents>
+            <Import-Package>*</Import-Package>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

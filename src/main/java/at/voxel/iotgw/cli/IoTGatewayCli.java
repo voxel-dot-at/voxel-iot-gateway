@@ -15,14 +15,13 @@
  *******************************************************************************/
 package at.voxel.iotgw.cli;
 
-//import java.net.URI;
 import java.net.URI;
 
 import org.eclipse.leshan.demo.cli.StandardHelpOptions;
 import org.eclipse.leshan.demo.cli.VersionProvider;
 import org.eclipse.leshan.demo.cli.converters.PortConverter;
 import org.eclipse.leshan.demo.servers.cli.DtlsSection;
-import org.eclipse.leshan.demo.servers.cli.GeneralSection;
+// import org.eclipse.leshan.demo.servers.cli.GeneralSection;
 import org.eclipse.leshan.demo.servers.cli.IdentitySection;
 
 import picocli.CommandLine;
@@ -97,6 +96,16 @@ public class IoTGatewayCli implements Runnable {
                                     "mqtt.", //
                                     "Default: ${DEFAULT-VALUE}." })
         public String mqttHost = "localhost";
+
+
+        @Option(names = { "-ews", "--enable-webserver" },
+                defaultValue = "true",
+                description = { //
+                        "enable Webserver.", //
+                        "Default: ${DEFAULT-VALUE}" }
+            )
+        public Boolean enableWebServer;
+
 
         @CommandLine.Option(names = { "-mp", "--mqtt-port" },
                             description = { //

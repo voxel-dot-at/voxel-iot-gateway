@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Copyright (c) 2013-2022 Sierra Wireless and others.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+and Eclipse Distribution License v1.0 which accompany this distribution.
+
+The Eclipse Public License is available at
+   http://www.eclipse.org/legal/epl-v20.html
+and the Eclipse Distribution License is available at
+   http://www.eclipse.org/org/documents/edl-v10.html.
+
+Contributors:
+    Sierra Wireless - initial API and implementation
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.leshan</groupId>
+    <artifactId>leshan-build-and-release-config</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <relativePath>../build-and-release-config/pom.xml</relativePath>
+  </parent>
+  <artifactId>demo-build-config</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Leshan shared demo build config</name>
+  <description>Shared Maven configuration for all Leshan demos</description>
+
+  <properties>
+    <node-version>v20.19.5</node-version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- We don't ensure Semantic versioning for demos -->
+        <plugin>
+          <groupId>org.revapi</groupId>
+          <artifactId>revapi-maven-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+        <!--  get revision to be able to display build number in demo -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>buildnumber-maven-plugin</artifactId>
+          <configuration>
+            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>create</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <!-- Config to build server and bs server front end demo -->
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <configuration>
+            <workingDirectory>webapp</workingDirectory>
+            <nodeVersion>${node-version}</nodeVersion>
+          </configuration>
+          <executions>
+            <execution>
+              <?m2e ignore?>
+              <id>install node and npm</id>
+              <goals>
+                <goal>install-node-and-npm</goal>
+              </goals>
+            </execution>
+            <execution>
+              <?m2e ignore?>
+              <id>npm install</id>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+            </execution>
+            <execution>
+              <?m2e ignore?>
+              <id>npm build</id>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <environmentVariables>
+                  <!-- this variable will be used by webapp/vue.config.js -->
+                  <MAVEN_OUTPUT_DIR>${project.build.outputDirectory}/webapp</MAVEN_OUTPUT_DIR>
+                  <!-- this variable is used by the webapp -->
+                  <VITE_APP_COMMIT_ID>${buildNumber}</VITE_APP_COMMIT_ID>
+                  <VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
+                </environmentVariables>
+                <arguments>run build</arguments>
+              </configuration>
+            </execution>
+            <execution>
+              <?m2e ignore?>
+              <id>npm sbom</id>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <environmentVariables>
+                  <!-- this variable will be used by package.json -->
+                  <OUTPUT_FORMAT>json</OUTPUT_FORMAT>
+                  <OUTPUT_BOM_NAME>bom-frontend</OUTPUT_BOM_NAME>
+                  <OUTPUT_BOM_DIRECTORY>${project.build.directory}</OUTPUT_BOM_DIRECTORY>
+                </environmentVariables>
+                <arguments>run sbom_maven</arguments>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>eclipseJenkins</id>
+      <properties>
+        <download-eclipse-path>/home/data/httpd/download.eclipse.org/leshan/</download-eclipse-path>
+        <download-remote-publish-path>genie.leshan@projects-storage.eclipse.org:${download-eclipse-path}</download-remote-publish-path>
+        <mirror-folder>build/mirror/</mirror-folder>
+        <node-folder>${mirror-folder}node/</node-folder>
+        <node-download-root>https://nodejs.org/dist/</node-download-root>
+        <node-source-url>${node-download-root}${node-version}/node-${node-version}-linux-x64.tar.gz</node-source-url>
+        <download-eclipse-url>https://download.eclipse.org/leshan/</download-eclipse-url>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>wagon-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>prepare-build</id>
+                  <goals>
+                    <goal>sshexec</goal>
+                  </goals>
+                  <phase>initialize</phase>
+                  <configuration>
+                    <url>scpexe://${download-remote-publish-path}</url>
+                    <commands>
+                      <command>mkdir -p ${download-eclipse-path}${node-folder}${node-version}</command>
+                      <command>wget -nc ${node-source-url} -P ${download-eclipse-path}${node-folder}${node-version}</command>
+                    </commands>
+                    <displayCommandOutputs>true</displayCommandOutputs>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>com.github.eirslett</groupId>
+              <artifactId>frontend-maven-plugin</artifactId>
+              <configuration>
+                <!-- See why we use a mirror : 
+                     https://gitlab.eclipse.org/eclipsefdn/helpdesk/-/issues/1032
+                     https://gitlab.eclipse.org/eclipsefdn/helpdesk/-/issues/3429#note_1184525
+                -->
+                <downloadRoot>${download-eclipse-url}${node-folder}</downloadRoot>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+</project>

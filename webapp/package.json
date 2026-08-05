@@ -23,8 +23,8 @@
     "vuetify-dialog": "^2.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "@mdi/js": "^6.6.96",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@vitejs/plugin-vue2": "^2.2.0",
     "browserslist-to-esbuild": "^1.2.0",
     "eslint": "^8.0.0",

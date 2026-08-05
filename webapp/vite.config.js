@@ -50,7 +50,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@leshan-demo-servers-shared": path.join(
         __dirname,
-        "../../leshan-demo-servers-shared/webapp/src"
+        "../../leshan/leshan-demo-servers-shared/webapp/src"
       ),
     },
     extensions: [".js", ".vue"],
