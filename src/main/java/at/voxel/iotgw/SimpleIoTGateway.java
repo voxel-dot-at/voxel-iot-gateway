@@ -81,6 +81,9 @@ public class SimpleIoTGateway {
         System.out.println("Version: 1.0.0");
         System.out.println("Running with basic dependencies...");
 
+        LOG.debug("test log debug");
+        LOG.info("test log info");
+        LOG.warn("test log warn");
         IoTGatewayCli cli = new IoTGatewayCli();
 
         CommandLine command = new CommandLine(cli).setTrimQuotes(true)
@@ -107,15 +110,15 @@ public class SimpleIoTGateway {
             // 3. Handle device registration
             // 4. Process IoT data
 
-            lwm2mServer.start();
 
             Server webServer = null;
             if (cli.main.enableWebServer) {
                 System.out.println("Starting webServer");
                 webServer = createJettyServer(cli, lwm2mServer);
-                webServer.start();
             }
 
+            lwm2mServer.start();
+            webServer.start();
             System.out.println("Gateway initialized successfully");
 
             // Simulate gateway running
