@@ -84,7 +84,7 @@ public class MqttAdapter {
             });
             
             // Connect
-            client.connect(options).waitForCompletion();
+            client.connect(options);
             
             LOG.info("MQTT connected to " + serverURI + " as " + clientId);
             
@@ -141,7 +141,7 @@ public class MqttAdapter {
             });
             
             // Connect
-            client.connect(options).waitForCompletion();
+            client.connect(options);
             
             LOG.info("MQTT connected to " + serverURI + " as " + clientId);
             
