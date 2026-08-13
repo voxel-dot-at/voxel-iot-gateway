@@ -202,3 +202,11 @@ After migration, the following should be verified:
   - `v-list-item-icon` → `prepend` slot
   - `v-list-item-content` → direct content
   - `v-list-item-action` → `append` slot
+
+### Vite 8 Upgrade
+
+- Upgraded Vite from 5.x to 8.2.1
+- Upgraded `@vitejs/plugin-vue` from 5.x to 6.x
+- Removed `@rollup/plugin-node-resolve` (now built-in to Vite)
+- Updated `vite.config.js` to use `import.meta.dirname` compatible syntax
+- Added alias configuration for `vuetify/components` and `@mdi/js` to handle Rolldown subpath export resolution

@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 
 import path from "path";
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,9 +19,6 @@ export default defineConfig({
       ],
       // Vue version of project.
       version: 3,
-    }),
-    nodeResolve({
-      modulePaths: [path.resolve("./node_modules")],
     }),
   ],
   build: {
@@ -52,8 +50,11 @@ export default defineConfig({
         __dirname,
         "../../leshan/leshan-demo-servers-shared/webapp/src"
       ),
+      "vuetify/components": path.resolve(__dirname, "./node_modules/vuetify/lib/components/index.js"),
+      "@mdi/js": path.resolve(__dirname, "./node_modules/@mdi/js/mdi.js"),
     },
     extensions: [".js", ".vue"],
+    dedupe: ["vue"],
   },
     base: "/m2m"
 });
