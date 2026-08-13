@@ -20,6 +20,7 @@ import preferencePlugin from "@/plugins/preference";
 import vuetify from "@/plugins/vuetify";
 import dialog from "@/plugins/dialog";
 import dialogPrompt from "@/plugins/dialog-prompt";
+import ssePlugin from "@/plugins/sse";
 import router from "@/router";
 
 export function registerPlugins(app) {
@@ -30,6 +31,7 @@ export function registerPlugins(app) {
         .use(vuetify)
         .use(dialog)
         .use(dialogPrompt) // Must be after dialog to extend it
+        .use(ssePlugin)
         .use(axiosPlugin)
         .use(router)
 }
