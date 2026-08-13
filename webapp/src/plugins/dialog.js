@@ -44,11 +44,8 @@ function hideDialog(result) {
 
 export default {
   install(app) {
-    // Store state for extension by dialog-prompt.js
-    app.config.globalProperties.$dialog._state = dialogState;
-    
-    // Provide dialog methods on globalProperties
-    app.config.globalProperties.$dialog = {
+    // Create the dialog API object first
+    const dialogApi = {
       confirm: (message, title = 'Confirm') => {
         const ConfirmDialog = {
           props: ['message', 'title'],
@@ -99,6 +96,12 @@ export default {
       },
       hide: () => hideDialog(null)
     };
+
+    // Store state for extension by dialog-prompt.js
+    dialogApi._state = dialogState;
+
+    // Provide dialog methods on globalProperties
+    app.config.globalProperties.$dialog = dialogApi;
 
     // Register the dialog wrapper component globally
     const DialogWrapper = {
