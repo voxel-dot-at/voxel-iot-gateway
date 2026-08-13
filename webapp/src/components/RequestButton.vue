@@ -11,19 +11,19 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-badge :color="state" dot bottom overlap :title="details" :value="state">
+  <v-badge :color="state" dot bottom overlap :content="details" :model-value="state">
     <v-btn
       class="ma-1"
-      small
+      size="small"
       tile
       min-width="0"
-      elevation="0"
+      variant="plain"
       :title="title"
       :loading="loading"
       :disabled="loading"
       @click.stop="onClick"
     >
-      <slot></slot>
+      <slot />
     </v-btn>
   </v-badge>
 </template>

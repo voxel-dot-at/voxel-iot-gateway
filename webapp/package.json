@@ -4,33 +4,32 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "vite",
+    "serve": "vite --host 0.0.0.0",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "sbom_maven": "echo 'SBOM generation skipped'"
   },
   "dependencies": {
-    "@fontsource/roboto": "^4.5.0",
-    "axios": "^1.6.0",
+    "@fontsource/roboto": "^5.0.0",
+    "axios": "^1.19.0",
+    "dayjs": "^1.11.0",
     "file-saver": "^2.0.5",
-    "vue": "^2.7.0",
-    "vue-moment": "^4.1.0",
+    "vue": "^3.5.0",
     "vue-preferences": "^3.0.0",
-    "vue-router": "^3.2.0",
-    "vue-sse": "^2.2.0",
-    "vuetify": "^2.5.0",
-    "vuetify-dialog": "^2.0.0"
+    "vue-router": "^4.5.0",
+    "vuetify": "^3.7.0",
+    "vuetify-dialog": "^2.0.17"
   },
   "devDependencies": {
-    "@mdi/js": "^6.6.96",
+    "@mdi/js": "^3.0.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@vitejs/plugin-vue2": "^2.2.0",
+    "@vitejs/plugin-vue": "^5.0.0",
     "browserslist-to-esbuild": "^1.2.0",
     "eslint": "^8.0.0",
-    "eslint-plugin-vue": "^8.0.0",
-    "sass": "~1.32.0",
-    "unplugin-vue-components": "^0.25.2",
+    "eslint-plugin-vue": "^9.0.0",
+    "sass": "^1.70.0",
+    "unplugin-vue-components": "^0.27.0",
     "vite": "^5.0.0"
   },
   "eslintConfig": {

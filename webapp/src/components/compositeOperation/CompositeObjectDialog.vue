@@ -56,22 +56,22 @@
             required
             :autofocus="!editMode"
             :disabled="editMode"
-          ></v-text-field>
+          />
           <paths-input v-model="compositeObject.paths" />
         </v-form>
       </v-card-text>
 
       <!-- Buttons -->
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
-          text
+          variant="text"
           @click="$emit(editMode ? 'edit' : 'new', compositeObject)"
           :disabled="!valid"
         >
           {{ editMode ? "Save" : "Add" }}
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -84,7 +84,7 @@ import PathsInput from "@leshan-demo-servers-shared/components/path/PathsInput.v
 export default {
   components: { PathsInput },
   props: {
-    value: Boolean /*open/close dialog*/,
+    modelValue: Boolean /*open/close dialog*/,
     initialValue: Object, // initial value : for edit mode.
     alreadyUsedName: { type: Array, default: () => [] }, // already used name to avoid to create 2 composite Object with same name
   },
@@ -112,15 +112,15 @@ export default {
   computed: {
     show: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value);
       },
     },
   },
   watch: {
-    value(v) {
+    modelValue(v) {
       if (v) {
         // reset validation and set initial value when dialog opens
         if (this.$refs.form) this.$refs.form.resetValidation();

@@ -15,7 +15,7 @@
     <v-row class="text-center pa-5">
       <v-col cols="12">
         <v-img
-          :src="require('@/assets/image/multicolor-leshan.png')"
+          :src="logoSrc"
           class="my-3"
           contain
           height="200"
@@ -56,9 +56,12 @@
 </template>
 
 <script>
+import logo from '@/assets/image/multicolor-leshan.png';
+
 export default {
   data() {
     return {
+      logoSrc: logo,
       version: import.meta.env.VITE_APP_VERSION,
       commitid: import.meta.env.VITE_APP_COMMIT_ID,
     };

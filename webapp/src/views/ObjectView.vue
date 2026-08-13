@@ -28,7 +28,7 @@
 
       <p style="white-space: pre-wrap">{{ objectdef.description }}</p>
     </div>
-    <v-divider></v-divider>
+    <v-divider />
     <div v-for="instanceId in instances" :key="objectdef.id + '/' + instanceId">
       <instance-view
         :objectdef="objectdef"

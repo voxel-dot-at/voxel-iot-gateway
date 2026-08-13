@@ -19,7 +19,7 @@
         :key="state"
         :indeterminate-icon="icon"
         :off-icon="$icons.mdiCloseBoxOutline"
-      ></v-checkbox>
+      />
     </v-col>
     <v-col>
       <v-text-field
@@ -70,7 +70,7 @@ export default {
         return this.localValue;
       },
       set(v) {
-        this.$emit("input", this.toBoolean(v));
+        this.$emit("update:modelValue", this.toBoolean(v));
       },
     },
     state() {

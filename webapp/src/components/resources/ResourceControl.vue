@@ -23,7 +23,7 @@
       v-if="readable"
       :title="'Passive Cancel Obverse ' + path"
     >
-      <v-icon dense small>{{
+      <v-icon size="small">{{
         $icons.mdiEyeRemoveOutline
       }}</v-icon></request-button
     >
@@ -47,7 +47,7 @@
       @on-click="execWithParams"
       v-if="executable"
       :title="'Execute with params ' + path"
-      ><v-icon dense small>{{ $icons.mdiCogOutline }}</v-icon></request-button
+      ><v-icon size="small">{{ $icons.mdiCogOutline }}</v-icon></request-button
     >
     <resource-write-dialog
       v-if="showDialog"

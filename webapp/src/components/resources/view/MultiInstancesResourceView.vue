@@ -11,7 +11,7 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-simple-table dense v-if="resource">
+  <v-simple-table density="compact" v-if="resource">
     <template v-slot:default>
       <thead>
         <tr>
@@ -31,11 +31,10 @@
           <td class="px-2">
             <v-icon
               class="pa-0"
-              x-small
+              size="x-small"
               v-show="state.observed[instancePath(id)]"
               :title="'Instance ' + instancePath(id) + ' observed'"
-              >{{ $icons.mdiEyeOutline }}</v-icon
-            >
+            >{{ $icons.mdiEyeOutline }}</v-icon>
           </td>
           <td class="px-2" style="white-space: nowrap">
             <resource-instance-control

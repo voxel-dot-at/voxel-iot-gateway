@@ -16,7 +16,7 @@
       >Obs</request-button
     >
     <request-button @on-click="stopObserve" title="Passive Cancel Obverse">
-      <v-icon dense small>{{
+      <v-icon size="small">{{
         $icons.mdiEyeRemoveOutline
       }}</v-icon></request-button
     >
@@ -31,18 +31,17 @@
       @write="write($event)"
     />
     <composite-operation-setting-menu>
-      <template v-slot:activator="{ on, attrs }">
+      <template v-slot:activator="{ attrs }">
         <v-btn
           class="ma-1"
-          small
+          size="small"
           tile
           min-width="0"
-          elevation="0"
+          variant="plain"
           v-bind="attrs"
-          v-on="on"
           title="Composite Operation Settings"
         >
-          <v-icon small> {{ $icons.mdiTune }}</v-icon>
+          <v-icon size="small"> {{ $icons.mdiTune }}</v-icon>
         </v-btn>
       </template>
     </composite-operation-setting-menu>

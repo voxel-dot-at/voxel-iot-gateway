@@ -22,14 +22,14 @@
       <resource-input
         :resourcedef="resourcedef"
         :hint="hint(resourcedef)"
-        :value="value"
-        @input="$emit('input', $event)"
+        :model-value="modelValue"
+        @update:modelValue="$emit('update:modelValue', $event)"
       />
     </v-col>
     <v-col cols="1" md="1">
       <v-tooltip left>
-        <template v-slot:activator="{ on }">
-          <v-icon v-on="on">
+        <template v-slot:activator="{ attrs }">
+          <v-icon v-bind="attrs">
             {{ $icons.mdiHelpCircleOutline }}
           </v-icon>
         </template>
@@ -47,7 +47,7 @@ import ResourceInput from "./ResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    value: null, // the input value for this resource (v-model)
+    modelValue: null, // the input value for this resource (v-model)
     resourcedef: Object, // the model of the resource
   },
   methods: {

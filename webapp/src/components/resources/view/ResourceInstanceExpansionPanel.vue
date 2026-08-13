@@ -36,14 +36,13 @@
               class="pa-2 text--disabled"
             >
               <v-icon
-                x-small
+                size="x-small"
                 v-show="state.observed[resourceInstancePath]"
                 :title="
                   'Resource Instance' + resourceInstancePath + ' observed'
                 "
-                >{{ $icons.mdiEyeOutline }}</v-icon
-              ></v-col
-            >
+              >{{ $icons.mdiEyeOutline }}</v-icon>
+            </v-col>
 
             <v-col cols="7" lg="3" align-self="center" class="pa-0">
               <v-fade-transition leave-absolute>

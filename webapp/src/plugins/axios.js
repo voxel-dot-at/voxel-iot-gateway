@@ -13,7 +13,6 @@
 
 "use strict";
 
-import Vue from "vue";
 import axios from "axios";
 
 // Full config:  https://github.com/axios/axios#request-config
@@ -63,10 +62,7 @@ _axios.interceptors.response.use(
     if (response.data && response.data.failure) {
       let msg = `Device response : ${response.data.status}`;
       if (response.data.errormessage) msg += ` - ${response.data.errormessage}`;
-      Vue.prototype.$dialog.notify.warning(escapeHTML(msg), {
-        position: "bottom-right",
-        timeout: 5000,
-      });
+      // Will be handled by global error handler
     }
     return response;
   },
@@ -97,32 +93,15 @@ _axios.interceptors.response.use(
       console.log(`${error.message}:, full error :`, error);
       message = error.message;
     }
-    Vue.prototype.$dialog.notify.error(escapeHTML(message), {
-      position: "bottom-right",
-      timeout: 5000,
-    });
     return Promise.reject(error);
   }
 );
 
-let axiosPlugin = {}
-axiosPlugin.install = function (Vue) {
-  Vue.axios = _axios;
+let axiosPlugin = {};
+axiosPlugin.install = function (app) {
+  app.config.globalProperties.axios = _axios;
+  app.config.globalProperties.$axios = _axios;
   window.axios = _axios;
-  Object.defineProperties(Vue.prototype, {
-    axios: {
-      get() {
-        return _axios;
-      },
-    },
-    $axios: {
-      get() {
-        return _axios;
-      },
-    },
-  });
 };
-
-Vue.use(axiosPlugin);
 
 export default axiosPlugin;

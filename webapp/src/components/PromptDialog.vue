@@ -21,11 +21,10 @@
         :placeholder="placeholderText"
         variant="outlined"
         @keydown.enter.prevent="submit"
-      ></v-text-field>
-
+      />
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn variant="text" color="primary" @click="submit">{{confirmationText}}</v-btn>
       <v-btn variant="text" @click="$emit('closeDialog', null)">{{cancelText}}</v-btn>
     </v-card-actions>

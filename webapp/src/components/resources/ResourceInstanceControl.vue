@@ -23,7 +23,7 @@
       v-if="readable"
       :title="'Passive Cancel Obverse ' + path"
     >
-      <v-icon dense small>{{
+      <v-icon size="small">{{
         $icons.mdiEyeRemoveOutline
       }}</v-icon></request-button
     >

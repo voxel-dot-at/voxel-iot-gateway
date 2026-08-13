@@ -34,7 +34,7 @@
                 v-model="instance.id"
                 label="Integer"
                 hint="Let this field empty to let the client choose the instance ID"
-              ></v-text-field>
+              />
             </v-col>
           </v-row>
 
@@ -44,16 +44,16 @@
             :key="resourcedef.id"
             v-model="instance.resources[resourcedef.id]"
             :resourcedef="resourcedef"
-          ></resource-input>
+          />
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <!-- dialog buttons-->
-        <v-btn text @click="create">
+        <v-btn variant="text" @click="create">
           Create
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -69,7 +69,7 @@ import ResourceInput from "../resources/input/LabelledResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    value: Boolean, // control if the dialog is displayed (v-model)
+    modelValue: Boolean, // control if the dialog is displayed (v-model)
     objectdef: Object, // the model of the object
   },
   data() {
@@ -78,7 +78,7 @@ export default {
     };
   },
   watch: {
-    value(v) {
+    modelValue(v) {
       // reset local state when dialog is open
       if (v) {
         (this.instance = { id: null, resources: {} }), (this.id = null);
@@ -88,10 +88,10 @@ export default {
   computed: {
     show: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value);
       },
     },
     writableResourceDef() {

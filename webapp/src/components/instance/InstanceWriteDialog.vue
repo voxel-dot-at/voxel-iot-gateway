@@ -34,20 +34,20 @@
               :key="resourcedef.id"
               v-model="instanceValue[resourcedef.id]"
               :resourcedef="resourcedef"
-            ></resource-input>
+            />
           </v-container>
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <!-- dialog buttons-->
-        <v-btn text @click="update">
+        <v-btn variant="text" @click="update">
           Update
         </v-btn>
-        <v-btn text @click="replace">
+        <v-btn variant="text" @click="replace">
           Replace
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -63,7 +63,7 @@ import ResourceInput from "../resources/input/LabelledResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    value: Boolean, // control if the dialog is displayed (v-model)
+    modelValue: Boolean, // control if the dialog is displayed (v-model)
     objectdef: Object, // the model of the object
     id: Number, // ID of the Object Instance
   },
@@ -73,7 +73,7 @@ export default {
     };
   },
   watch: {
-    value(v) {
+    modelValue(v) {
       // reset local state when dialog is open
       if (v) this.instanceValue = {};
     },
@@ -81,10 +81,10 @@ export default {
   computed: {
     show: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value);
       },
     },
     writableResourceDef() {

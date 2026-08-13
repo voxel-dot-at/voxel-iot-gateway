@@ -11,13 +11,16 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
  *******************************************************************************/
 
-import Vue from "vue";
 import vuetify from '@/plugins/vuetify'
 import VuetifyDialog from 'vuetify-dialog'
 import 'vuetify-dialog/dist/vuetify-dialog.css'
 
-Vue.use(VuetifyDialog, {
-  context: {
-    vuetify
+export default {
+  install(app) {
+    app.use(VuetifyDialog, {
+      context: {
+        vuetify
+      }
+    })
   }
-})
+}

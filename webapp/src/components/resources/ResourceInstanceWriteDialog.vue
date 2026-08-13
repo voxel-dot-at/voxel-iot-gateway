@@ -38,11 +38,11 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="write">
+        <v-spacer />
+        <v-btn variant="text" @click="write">
           Write
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -59,7 +59,7 @@ import SingleValueInput from "../values/input/SingleValueInput.vue";
 export default {
   components: { SingleValueInput },
   props: {
-    value: Boolean, // control if the dialog is displayed (v-model)
+    modelValue: Boolean, // control if the dialog is displayed (v-model)
     resourcedef: Object, // the model of the resource
     path: String, // the path of the resource
     instanceId: Number, // the resource instance ID
@@ -72,15 +72,15 @@ export default {
   computed: {
     show: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value);
       },
     },
   },
   watch: {
-    value(v) {
+    modelValue(v) {
       // reset local state when dialog is open
       if (v) this.resourceValue = null;
     },

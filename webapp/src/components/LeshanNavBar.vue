@@ -12,37 +12,39 @@
   ----------------------------------------------------------------------------->
 <template>
   <v-app-bar dark flat dense max-height="48">
-    <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp">
-      <v-img :src="require('@/assets/image/logo.png')" max-height="32" contain></v-img>
+    <v-toolbar-title v-if="$vuetify.display.smAndUp">
+      <v-img :src="logoSrc" max-height="32" contain />
     </v-toolbar-title>
 
     <!-- See more details about why we hide-slider and replace it by custom css (active-class="active") :
          https://github.com/eclipse/leshan/issues/1134 -->
     <v-tabs
-      :right="$vuetify.breakpoint.smAndUp"
-      :grow="!$vuetify.breakpoint.smAndUp"
+      :right="$vuetify.display.smAndUp"
+      :grow="!$vuetify.display.smAndUp"
       hide-slider
     >
       <v-tab
         v-for="page in pages"
         :key="page.title"
-        fixed-tabs
         :to="page.route"
-        active-class="active"
+        class="tab-item"
       >
-        <v-icon>{{ page.icon }}</v-icon
-        ><span class="pl-2" v-if="$vuetify.breakpoint.smAndUp">
+        <v-icon>{{ page.icon }}</v-icon>
+        <span class="pl-2" v-if="$vuetify.display.smAndUp">
           {{ page.title }}
-        </span></v-tab
-      >
+        </span>
+      </v-tab>
     </v-tabs>
   </v-app-bar>
 </template>
 
 <script>
+import logo from '@/assets/image/logo.png';
+
 export default {
   data: function () {
     return {
+      logoSrc: logo,
       pages: [
         { title: "Clients", route: "/clients", icon: this.$icons.mdiDevices },
         {
@@ -76,7 +78,7 @@ export default {
   }
 }
 
-.active {
+.tab-item.active {
   border-spacing: 2px;
   border-bottom: 2px solid white;
   animation-name: becomeActive;

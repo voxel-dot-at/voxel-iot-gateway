@@ -14,9 +14,9 @@
   <v-row class="fill-height" no-gutters>
     <v-col cols="12" v-if="deregister">
       <div style="height: 100px"></div>
-      <v-card elevation="0" class="text-center">
+      <v-card variant="plain" class="text-center">
         <v-card-text class="fill-height">
-          <v-icon x-large> {{ $icons.mdiExitRun }}</v-icon>
+          <v-icon size="x-large"> {{ $icons.mdiExitRun }}</v-icon>
           <v-card-title class="justify-center">
             {{ $route.params.endpoint }} is deregistered.
           </v-card-title>
@@ -40,11 +40,11 @@
           <div>Reg. ID: {{ registration.registrationId }}</div>
           <div>
             Registered:
-            {{ registration.registrationDate | moment("MMM D, h:mm:ss A") }}
+            {{ formatDate(registration.registrationDate) }}
           </div>
           <div>
             Updated:
-            {{ registration.lastUpdate | moment("MMM D, h:mm:ss A") }}
+            {{ formatDate(registration.lastUpdate) }}
           </div>
         </div>
         <v-divider />
@@ -55,19 +55,19 @@
 
       <!-- Composite Operations-->
       <span>
-        <v-list dense v-if="registration && registration.lwM2mVersion != '1.0'">
-          <v-list-item-group>
-            <v-list-item
-              :to="'/clients/' + $route.params.endpoint + '/composite'"
+        <v-list density="compact" v-if="registration && registration.lwM2mVersion != '1.0'">
+          <v-list-item
+            density="compact"
+            class="pa-1"
+            :to="'/clients/' + $route.params.endpoint + '/composite'"
+          >
+            <template v-slot:prepend>
+              <v-icon>{{ $icons.mdiFormatListCheckbox }}</v-icon>
+            </template>
+            <v-list-item-title density="compact"
+              >Composite Operations</v-list-item-title
             >
-              <v-list-item-icon class="me-2">
-                <v-icon>{{ $icons.mdiFormatListCheckbox }}</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Composite Operations</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+          </v-list-item>
         </v-list>
         <v-divider />
       </span>
@@ -84,7 +84,7 @@
           v-if="objectdefs"
           :objectdef="objectdef"
           :instances="instances"
-        ></router-view>
+        />
       </div>
       <div v-else>
         <!-- compositeOperationView case -->
@@ -92,7 +92,7 @@
           v-if="objectdefs && registration"
           :objectdefs="objectdefs"
           :allInstances="registration.availableInstances"
-        ></router-view>
+        />
       </div>
     </v-col>
   </v-row>
@@ -102,6 +102,7 @@
 import ClientInfo from "../components/ClientInfo.vue";
 import ClientSetting from "../components/ClientSetting.vue";
 import ObjectSelector from "../components/object/ObjectSelector.vue";
+import dayjs from "dayjs";
 
 // get models for this endpoint
 export default {
@@ -119,6 +120,9 @@ export default {
           "api/objectspecs/" + encodeURIComponent(this.$route.params.endpoint)
         )
         .then((response) => (this.objectdefs = Object.freeze(response.data)));
+    },
+    formatDate(date) {
+      return dayjs(date).format("MMM D, h:mm:ss A");
     },
   },
   computed: {
@@ -244,7 +248,7 @@ export default {
         this.deregister = true;
       });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.sse.disconnect();
   },
 };

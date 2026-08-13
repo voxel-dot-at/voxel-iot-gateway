@@ -12,13 +12,58 @@
  *******************************************************************************/
 
 import "@fontsource/roboto";
-import Vue from "vue";
-import Vuetify from "vuetify/lib/framework";
+import { createVuetify } from "vuetify";
+import { VBtn, VCard, VDialog, VIcon, VSelect, VTextField, VForm, VChip, VDataTable, VToolbar, VDivider, VContainer, VRow, VCol, VSheet, VList, VListItem, VExpansionPanel, VExpansionPanels, VExpansionPanelHeader, VExpansionPanelContent, VBadge, VMenu, VCardText, VCardTitle, VCardActions, VSpacer, VSimpleTable, VTooltip, VCheckbox, VImg, VApp, VMain, VAppBar, VTabs, VTab, VSnackbar, VAlert, VSubheader, VListItemAction, VListItemContent, VListItemIcon, VListItemTitle, VListItemSubtitle, VListItemGroup } from "vuetify/components";
 
-Vue.use(Vuetify);
-
-export default new Vuetify({
-  icons: {
-    iconfont: "mdiSvg", // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4' || 'faSvg'
+export default createVuetify({
+  components: {
+    VBtn,
+    VCard,
+    VDialog,
+    VIcon,
+    VSelect,
+    VTextField,
+    VForm,
+    VChip,
+    VDataTable,
+    VToolbar,
+    VDivider,
+    VContainer,
+    VRow,
+    VCol,
+    VSheet,
+    VList,
+    VListItem,
+    VExpansionPanel,
+    VExpansionPanels,
+    VExpansionPanelHeader,
+    VExpansionPanelContent,
+    VBadge,
+    VMenu,
+    VCardText,
+    VCardTitle,
+    VCardActions,
+    VSpacer,
+    VSimpleTable,
+    VTooltip,
+    VCheckbox,
+    VImg,
+    VApp,
+    VMain,
+    VAppBar,
+    VTabs,
+    VTab,
+    VSnackbar,
+    VAlert,
+    VSubheader,
+    VListItemAction,
+    VListItemContent,
+    VListItemIcon,
+    VListItemTitle,
+    VListItemSubtitle,
+    VListItemGroup,
+  },
+  theme: {
+    defaultTheme: "light",
   },
 });

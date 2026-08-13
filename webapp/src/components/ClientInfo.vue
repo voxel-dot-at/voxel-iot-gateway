@@ -14,8 +14,8 @@
   <span>
     <!-- info icon -->
     <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small">
+      <template v-slot:activator="{ attrs }">
+        <v-icon v-bind="attrs" :size="small ? 'small' : undefined">
           {{ $icons.mdiInformation }}
         </v-icon>
       </template>
@@ -40,8 +40,8 @@
     </v-tooltip>
     <!-- secure icon -->
     <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small" v-visible="registration.secure">
+      <template v-slot:activator="{ attrs }">
+        <v-icon v-bind="attrs" :size="small ? 'small' : undefined" v-visible="registration.secure">
           {{ $icons.mdiLock }}
         </v-icon>
       </template>
@@ -49,8 +49,8 @@
     </v-tooltip>
     <!-- secure icon -->
     <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small" v-visible="registration.sleeping">
+      <template v-slot:activator="{ attrs }">
+        <v-icon v-bind="attrs" :size="small ? 'small' : undefined" v-visible="registration.sleeping">
           {{ $icons.mdiSleep }}
         </v-icon>
       </template>

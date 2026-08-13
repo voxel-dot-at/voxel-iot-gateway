@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue2";
+import vue from "@vitejs/plugin-vue";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { VuetifyResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
@@ -17,7 +17,7 @@ export default defineConfig({
         VuetifyResolver(),
       ],
       // Vue version of project.
-      version: 2.7,
+      version: 3,
     }),
     nodeResolve({
       modulePaths: [path.resolve("./node_modules")],
@@ -30,14 +30,14 @@ export default defineConfig({
     target: browserslistToEsbuild(),
   },
   preview: {
-    port: 8088,
+    port: 8087,
   },
   server: {
-    port: 8088,
+    port: 8087,
     proxy: {
       "/api": {
         // 8080 is the default port for leshan-server-demo if you change it in development phase you need to change this value too.
-        target: "http://localhost:8080/m2m",
+        target: "http://localhost:8088/m2m",
         ws: true,
         changeOrigin: true,
       },

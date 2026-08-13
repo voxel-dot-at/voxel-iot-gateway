@@ -11,13 +11,13 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-card elevation="0" class="grey lighten-4">
+  <v-card variant="plain" class="grey lighten-4">
     <!-- Model -->
     <v-card-subtitle class="pb-0 text-decoration-underline">
       Model :
     </v-card-subtitle>
     <v-card-text>
-      <v-simple-table dense>
+      <v-simple-table density="compact">
         <template v-slot:default>
           <thead>
             <tr>

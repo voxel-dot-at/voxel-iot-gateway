@@ -12,20 +12,20 @@
  *******************************************************************************/
 <template>
   <v-container>
-    <v-card>
+    <v-card variant="plain">
       <v-card-title>Server Configuration</v-card-title>
       <v-card-text>
         <v-form>
           <v-text-field
-            v-model="pubkeyFileName"
+            :model-value="pubkeyFileName"
             label="Public Key File Name"
             disabled
-          ></v-text-field>
+          />
           <v-text-field
-            v-model="certFileName"
+            :model-value="certFileName"
             label="Certificate File Name"
             disabled
-          ></v-text-field>
+          />
         </v-form>
       </v-card-text>
     </v-card>

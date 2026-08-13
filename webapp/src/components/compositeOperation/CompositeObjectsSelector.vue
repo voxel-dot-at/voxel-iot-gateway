@@ -14,11 +14,11 @@
   <v-sheet color="grey lighten-5" class="pa-4" width="100%" height="100%">
     <v-card>
       <v-card-actions class="justify-center">
-        <v-btn small @click="openNewCompositeObject()">
+        <v-btn size="small" @click="openNewCompositeObject()">
           Add Composite Object
         </v-btn>
       </v-card-actions>
-      <v-list dense>
+      <v-list density="compact">
         <v-list-item-group>
           <v-list-item
             v-for="(compositeObject, index) in compositeObjects"
@@ -44,7 +44,7 @@
                 icon
                 @click.prevent="openEditCompositeObject(compositeObject)"
               >
-                <v-icon small>
+                <v-icon size="small">
                   {{ $icons.mdiPencil }}
                 </v-icon>
               </v-btn>

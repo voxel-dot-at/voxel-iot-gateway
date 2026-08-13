@@ -17,7 +17,7 @@
     </v-col>
 
     <v-col>
-      <v-card elevation="0">
+      <v-card variant="plain">
         <!-- Resource Controls -->
         <resource-instance-control
           :resourcedef="resourcedef"

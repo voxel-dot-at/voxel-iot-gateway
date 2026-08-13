@@ -11,7 +11,6 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
  *******************************************************************************/
 
-import Vue from "vue";
 import {
   mdiAccessPointNetwork,
   mdiAlertCircle,
@@ -90,16 +89,8 @@ const _icons = {
 };
 
 let IconsPlugin = {};
-IconsPlugin.install = function (Vue) {
-  Object.defineProperties(Vue.prototype, {
-    $icons: {
-      get() {
-        return _icons;
-      },
-    },
-  });
+IconsPlugin.install = function (app) {
+  app.config.globalProperties.$icons = _icons;
 };
-
-Vue.use(IconsPlugin);
 
 export default IconsPlugin;
