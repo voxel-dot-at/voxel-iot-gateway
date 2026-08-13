@@ -300,6 +300,8 @@ public class SimpleIoTGateway {
         } else {
             jettyAddr = new InetSocketAddress(cli.main.webhost, cli.main.webPort);
         }
+        System.console().printf("Web Listening on port " + cli.main.webPort);
+
         Server server = new Server(jettyAddr);
         ServletContextHandler root = new ServletContextHandler("/", true, false);
         server.setHandler(root);

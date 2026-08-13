@@ -24,7 +24,7 @@
       :title="'Passive Cancel Obverse ' + path"
     >
       <v-icon size="small">{{
-        $icons.mdiEyeRemoveOutline
+        $icons.mdiEyeOffOutline
       }}</v-icon></request-button
     >
     <request-button @on-click="read" v-if="readable" :title="'Read ' + path"

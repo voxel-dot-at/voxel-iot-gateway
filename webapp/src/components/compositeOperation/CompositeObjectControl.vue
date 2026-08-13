@@ -17,7 +17,7 @@
     >
     <request-button @on-click="stopObserve" title="Passive Cancel Obverse">
       <v-icon size="small">{{
-        $icons.mdiEyeRemoveOutline
+        $icons.mdiEyeOffOutline
       }}</v-icon></request-button
     >
     <request-button @on-click="read" title="Composite Read">R</request-button>

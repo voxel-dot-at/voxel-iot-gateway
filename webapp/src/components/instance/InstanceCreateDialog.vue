@@ -27,7 +27,7 @@
           <!-- instance if field -->
           <v-row dense>
             <v-col cols="12" md="2">
-              <v-subheader>Instance Id </v-subheader>
+              <div>Instance Id </div>
             </v-col>
             <v-col cols="12" md="9">
               <v-text-field

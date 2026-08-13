@@ -46,7 +46,7 @@ export default {
     return {
       logoSrc: logo,
       pages: [
-        { title: "Clients", route: "/clients", icon: this.$icons.mdiDevices },
+        { title: "Clients", route: "/clients", icon: this.$icons.mdiServer },
         {
           title: "Server",
           route: "/server",

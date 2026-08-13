@@ -19,43 +19,38 @@
         </v-btn>
       </v-card-actions>
       <v-list density="compact">
-        <v-list-item-group>
-          <v-list-item
-            v-for="(compositeObject, index) in compositeObjects"
-            :key="index"
-            :to="
-              '/clients/' +
-              $route.params.endpoint +
-              '/composite/' +
-              compositeObject.name
-            "
+        <v-list-item
+          v-for="(compositeObject, index) in compositeObjects"
+          :key="index"
+          :to="
+            '/clients/' +
+            $route.params.endpoint +
+            '/composite/' +
+            compositeObject.name
+          "
+        >
+          <template v-slot:prepend>
+            <composite-object-icons :compositeObject="compositeObject" />
+          </template>
+          <v-list-item-title> {{ compositeObject.name }}</v-list-item-title>
+          <v-list-item-subtitle>
+            {{ pathsAsString(compositeObject) }}</v-list-item-subtitle
           >
-            <v-list-item-icon>
-              <composite-object-icons :compositeObject="compositeObject" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title> {{ compositeObject.name }}</v-list-item-title>
-              <v-list-item-subtitle>
-                {{ pathsAsString(compositeObject) }}</v-list-item-subtitle
-              >
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-btn
-                icon
-                @click.prevent="openEditCompositeObject(compositeObject)"
-              >
-                <v-icon size="small">
-                  {{ $icons.mdiPencil }}
-                </v-icon>
-              </v-btn>
-            </v-list-item-action>
-            <v-list-item-action>
-              <v-btn icon @click.prevent="removeCompositeObject(index)">
-                <v-icon>{{ $icons.mdiDelete }}</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list-item-group>
+          <template v-slot:append>
+            <v-btn
+              icon
+              size="small"
+              @click.prevent="openEditCompositeObject(compositeObject)"
+            >
+              <v-icon size="small">
+                {{ $icons.mdiPencil }}
+              </v-icon>
+            </v-btn>
+            <v-btn icon size="small" @click.prevent="removeCompositeObject(index)">
+              <v-icon>{{ $icons.mdiDelete }}</v-icon>
+            </v-btn>
+          </template>
+        </v-list-item>
       </v-list>
 
       <!-- composite object dialog -->

@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { VuetifyResolver } from "unplugin-vue-components/resolvers";
+import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 
@@ -14,7 +14,7 @@ export default defineConfig({
     Components({
       resolvers: [
         // Vuetify
-        VuetifyResolver(),
+        Vuetify3Resolver(),
       ],
       // Vue version of project.
       version: 3,

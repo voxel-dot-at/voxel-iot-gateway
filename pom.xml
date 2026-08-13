@@ -19,7 +19,7 @@
 
         <version>2.0.0-SNAPSHOT</version>
 
-            <node-version>v20.19.5</node-version>
+        <node-version>v20.19.5</node-version>
 
         <!-- from leshan -->
         <californium.version>4.0.0-M6</californium.version>
@@ -77,6 +77,12 @@
             <artifactId>leshan-tl-jc-server-coaptcp</artifactId>
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.api.version}</version>
+        </dependency>
+
         <!-- californium -->
         <dependency>
             <groupId>org.eclipse.californium</groupId>
@@ -114,13 +120,6 @@
             <version>1.2.5</version>
         </dependency>
 
-        <!-- Logging -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
-        </dependency>
-
         <!-- JSON Processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -134,6 +133,16 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-webapp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-servlets</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -163,6 +172,16 @@
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
             <version>1.0.4</version>
+        </dependency>
+
+        <!-- Logging -->
+
+        <!-- runtime dependencies -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -259,11 +278,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.4.1</version>
                 </plugin>
-                <plugin>
+                <!-- <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>1.13.4</version>
-                </plugin>
+                </plugin> -->
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.0</version>
@@ -339,7 +358,7 @@
                     <artifactId>animal-sniffer-maven-plugin</artifactId>
                     <version>1.23</version>
                 </plugin>
-                <plugin>
+                <!-- <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
                     <version>0.15.0</version>
@@ -350,7 +369,7 @@
                             <version>0.28.1</version>
                         </dependency>
                     </dependencies>
-                </plugin>
+                </plugin> -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>wagon-maven-plugin</artifactId>
@@ -363,17 +382,17 @@
                 </plugin>
 
 
-        <!-- We don't ensure Semantic versioning for demos -->
-        <plugin>
-          <groupId>org.revapi</groupId>
-          <artifactId>revapi-maven-plugin</artifactId>
-          <configuration>
-            <skip>true</skip>
-          </configuration>
-        </plugin>
-        <!--  get revision to be able to display build number in demo -->
+                <!-- We don't ensure Semantic versioning for demos -->
+                <plugin>
+                    <groupId>org.revapi</groupId>
+                    <artifactId>revapi-maven-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <!--  get revision to be able to display build number in demo -->
 
-        <!-- <plugin>
+                <!-- <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>buildnumber-maven-plugin</artifactId>
           <configuration>
@@ -387,64 +406,65 @@
             </execution>
           </executions>
         </plugin> -->
-        <!-- Config to build server and bs server front end demo -->
-        <plugin>
-          <groupId>com.github.eirslett</groupId>
-          <artifactId>frontend-maven-plugin</artifactId>
-          <configuration>
-            <workingDirectory>webapp</workingDirectory>
-            <nodeVersion>${node-version}</nodeVersion>
-          </configuration>
-          <executions>
-            <execution>
-              <?m2e ignore?>
-              <id>install node and npm</id>
-              <goals>
-                <goal>install-node-and-npm</goal>
-              </goals>
-            </execution>
-            <execution>
-              <?m2e ignore?>
-              <id>npm install</id>
-              <goals>
-                <goal>npm</goal>
-              </goals>
-            </execution>
-            <execution>
-              <?m2e ignore?>
-              <id>npm build</id>
-              <goals>
-                <goal>npm</goal>
-              </goals>
-              <configuration>
-                <environmentVariables>
-                  <!-- this variable will be used by webapp/vue.config.js -->
-                  <MAVEN_OUTPUT_DIR>${project.build.outputDirectory}/webapp</MAVEN_OUTPUT_DIR>
-                  <!-- this variable is used by the webapp -->
-                  <VITE_APP_COMMIT_ID>${buildNumber}</VITE_APP_COMMIT_ID>
-                  <VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
-                </environmentVariables>
-                <arguments>run build</arguments>
-              </configuration>
-            </execution>
-            <execution>
-              <?m2e ignore?>
-              <id>npm sbom</id>
-              <goals>
-                <goal>npm</goal>
-              </goals>
-              <configuration>
-                <environmentVariables>
-                  <!-- this variable will be used by package.json -->
-                  <OUTPUT_FORMAT>json</OUTPUT_FORMAT>
-                  <OUTPUT_BOM_NAME>bom-frontend</OUTPUT_BOM_NAME>
-                  <OUTPUT_BOM_DIRECTORY>${project.build.directory}</OUTPUT_BOM_DIRECTORY>
-                </environmentVariables>
-                <arguments>run sbom_maven</arguments>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+                <!-- Config to build server and bs server front end demo -->
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.13.4</version>
+                    <configuration>
+                        <workingDirectory>webapp</workingDirectory>
+                        <nodeVersion>${node-version}</nodeVersion>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <?m2e ignore?>
+                            <id>install node and npm</id>
+                            <goals>
+                                <goal>install-node-and-npm</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <?m2e ignore?>
+                            <id>npm install</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <?m2e ignore?>
+                            <id>npm build</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <environmentVariables>
+                                    <!-- this variable will be used by webapp/vue.config.js -->
+                                    <MAVEN_OUTPUT_DIR>${project.build.outputDirectory}/webapp</MAVEN_OUTPUT_DIR>
+                                    <!-- this variable is used by the webapp -->
+                                    <VITE_APP_COMMIT_ID>${buildNumber}</VITE_APP_COMMIT_ID>
+                                    <VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
+                                </environmentVariables>
+                                <arguments>run build</arguments>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <?m2e ignore?>
+                            <id>npm sbom</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <environmentVariables>
+                                    <!-- this variable will be used by package.json -->
+                                    <OUTPUT_FORMAT>json</OUTPUT_FORMAT>
+                                    <OUTPUT_BOM_NAME>bom-frontend</OUTPUT_BOM_NAME>
+                                    <OUTPUT_BOM_DIRECTORY>${project.build.directory}</OUTPUT_BOM_DIRECTORY>
+                                </environmentVariables>
+                                <arguments>run sbom_maven</arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
             </plugins>
         </pluginManagement>
@@ -529,10 +549,10 @@
                 </executions>
             </plugin>
             -->
-            <plugin>
+            <!-- <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>

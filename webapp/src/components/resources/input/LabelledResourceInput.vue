@@ -13,10 +13,10 @@
 <template>
   <v-row dense>
     <v-col cols="12" md="2">
-      <v-subheader v-if="resourcedef.mandatory"
-        ><strong>{{ resourcedef.name }} *</strong></v-subheader
+      <div v-if="resourcedef.mandatory"
+        ><strong>{{ resourcedef.name }} *</strong></div
       >
-      <v-subheader v-else>{{ resourcedef.name }} </v-subheader>
+      <div v-else>{{ resourcedef.name }} </div>
     </v-col>
     <v-col cols="11" md="9">
       <resource-input

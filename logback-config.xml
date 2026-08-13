@@ -23,8 +23,8 @@ Contributors:
 		</encoder>
 	</appender>
 
-	<root level="WARN">
-		<appender-ref ref="TERMINAL" />
+	<root level="debug">
+		<appender-ref ref="STDIO" />
 	</root>
 	
 	<logger name="*" level="DEBUG"/>

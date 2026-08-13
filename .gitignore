@@ -44,3 +44,5 @@ bin/
 !**/src/**/*.pem
 !**/certificates/*.pem
 *~
+
+voxel-iot-*
