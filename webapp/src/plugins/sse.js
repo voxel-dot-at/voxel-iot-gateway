@@ -26,40 +26,42 @@ class SSEClient {
   }
 
   connect() {
-    if (this.eventSource) {
-      this.eventSource.close();
-    }
-
-    this.eventSource = new EventSource(this.url);
-
-    this.eventSource.onmessage = (event) => {
-      let data;
-      try {
-        data = JSON.parse(event.data);
-      } catch (e) {
-        data = event.data;
+    return new Promise((resolve, reject) => {
+      if (this.eventSource) {
+        this.eventSource.close();
       }
 
-      // Handle different event types
-      if (data.type) {
-        this._emit(data.type, data);
-      } else {
-        // Fallback: emit as 'message'
-        this._emit('message', data);
-      }
-    };
+      this.eventSource = new EventSource(this.url);
 
-    this.eventSource.onerror = (error) => {
-      this._emit('error', error);
-      this._connected = false;
-    };
+      this.eventSource.onmessage = (event) => {
+        let data;
+        try {
+          data = JSON.parse(event.data);
+        } catch (e) {
+          data = event.data;
+        }
 
-    this.eventSource.onopen = () => {
-      this._connected = true;
-      this._emit('open', null);
-    };
+        // Handle different event types
+        if (data.type) {
+          this._emit(data.type, data);
+        } else {
+          // Fallback: emit as 'message'
+          this._emit('message', data);
+        }
+      };
 
-    return this;
+      this.eventSource.onerror = (error) => {
+        this._emit('error', error);
+        this._connected = false;
+        reject(error);
+      };
+
+      this.eventSource.onopen = () => {
+        this._connected = true;
+        this._emit('open', null);
+        resolve(this);
+      };
+    });
   }
 
   on(event, callback) {
