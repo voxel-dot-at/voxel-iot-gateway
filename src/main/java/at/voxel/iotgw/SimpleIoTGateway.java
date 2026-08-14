@@ -110,7 +110,6 @@ public class SimpleIoTGateway {
             // 3. Handle device registration
             // 4. Process IoT data
 
-
             Server webServer = null;
             if (cli.main.enableWebServer) {
                 System.out.println("Starting webServer");
@@ -123,8 +122,11 @@ public class SimpleIoTGateway {
 
             // Simulate gateway running
             try {
-                System.out.println("Gateway running... Press Ctrl+C to stop");
-                TimeUnit.MINUTES.sleep(1);
+                while (true) {
+                    System.out.println("Gateway running... Press Ctrl+C to stop. mqtt: " + mqttClient.isConnected() + " web: " + webServer.isRunning() );
+                    
+                    TimeUnit.MINUTES.sleep(1);
+                }
             } catch (InterruptedException e) {
                 // Thread.currentThread().interrupt();
                 LOG.debug("interrupted.");
@@ -300,7 +302,7 @@ public class SimpleIoTGateway {
         } else {
             jettyAddr = new InetSocketAddress(cli.main.webhost, cli.main.webPort);
         }
-        System.console().printf("Web Listening on port " + cli.main.webPort);
+        System.out.printf("Web Listening on port %d%n", cli.main.webPort);
 
         Server server = new Server(jettyAddr);
         ServletContextHandler root = new ServletContextHandler("/", true, false);

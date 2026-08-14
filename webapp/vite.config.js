@@ -26,12 +26,24 @@ export default defineConfig({
       ? process.env.MAVEN_OUTPUT_DIR
       : "../target/dist",
     target: browserslistToEsbuild(),
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('vuetify')) {
+            return 'vuetify';
+          }
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
+    },
   },
   preview: {
     port: 8087,
   },
   server: {
-    port: 8087,
+    port: 8088,
     proxy: {
       "/api": {
         // 8080 is the default port for leshan-server-demo if you change it in development phase you need to change this value too.
