@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     requestPath() {
-      return `api/clients/${encodeURIComponent(this.endpoint)}/composite`;
+      return `/api/clients/${encodeURIComponent(this.endpoint)}/composite`;
     },
     requestOption() {
       return `?timeout=${timeout.get()}&pathformat=${compositePathFormat.get()}&nodeformat=${compositeNodeFormat.get()}`;

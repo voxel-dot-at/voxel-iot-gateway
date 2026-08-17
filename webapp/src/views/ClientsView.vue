@@ -86,7 +86,7 @@ export default {
   mounted() {
     // listen events to update registration.
     this.sse = this.$sse
-      .create({ url: "api/event" })
+      .create({ url: "/api/event" })
       .on("REGISTRATION", (reg) => {
         this.registrations = this.registrations
           .filter((r) => reg.endpoint !== r.endpoint)
@@ -119,7 +119,7 @@ export default {
 
     // get all registrations
     this.axios
-      .get("api/clients")
+      .get("/api/clients")
       .then(
         (response) => (
           (this.loading = false), (this.registrations = response.data)

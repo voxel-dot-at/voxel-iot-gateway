@@ -120,7 +120,7 @@ export default {
     updateModels: function () {
       this.axios
         .get(
-          "api/objectspecs/" + encodeURIComponent(this.$route.params.endpoint)
+          "/api/objectspecs/" + encodeURIComponent(this.$route.params.endpoint)
         )
         .then((response) => (this.objectdefs = Object.freeze(response.data)));
     },
@@ -157,7 +157,7 @@ export default {
   mounted() {
     this.sse = this.$sse
       .create({
-        url: "api/event?ep=" + encodeURIComponent(this.$route.params.endpoint),
+        url: "/api/event?ep=" + encodeURIComponent(this.$route.params.endpoint),
       })
       .on("REGISTRATION", (reg) => {
         this.registration = reg;
@@ -260,7 +260,7 @@ export default {
 
     // get registration
     this.axios
-      .get("api/clients/" + encodeURIComponent(this.$route.params.endpoint))
+      .get("/api/clients/" + encodeURIComponent(this.$route.params.endpoint))
       .then((response) => {
         (this.registration = response.data), // get models for this endpoint
           this.updateModels();

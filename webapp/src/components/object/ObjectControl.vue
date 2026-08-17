@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     requestPath() {
-      return `api/clients/${encodeURIComponent(this.endpoint)}/${
+      return `/api/clients/${encodeURIComponent(this.endpoint)}/${
         this.objectdef.id
       }?timeout=${timeout.get()}&format=${format.get()}`;
     },

@@ -105,7 +105,7 @@ export default {
       }
     },
     requestPath() {
-      return `api/clients/${encodeURIComponent(this.endpoint)}${this.path}`;
+      return `/api/clients/${encodeURIComponent(this.endpoint)}${this.path}`;
     },
     requestOption() {
       return `?timeout=${timeout.get()}&format=${this.getFormat()}`;

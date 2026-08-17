@@ -146,7 +146,7 @@ export default {
 
   beforeMount() {
     this.axios
-      .get("api/security/clients")
+      .get("/api/security/clients")
       .then((response) => (this.securityInfos = response.data));
   },
 
@@ -157,7 +157,7 @@ export default {
     },
 
     newSec(cred) {
-      this.axios.put("api/security/clients/", cred).then(() => {
+      this.axios.put("/api/security/clients/", cred).then(() => {
         let index = this.securityInfos.findIndex(
           (s) => s.endpoint == cred.endpoint
         );
@@ -176,7 +176,7 @@ export default {
     },
 
     editSec(sec) {
-      this.axios.put("api/security/clients/", sec).then(() => {
+      this.axios.put("/api/security/clients/", sec).then(() => {
         this.securityInfos = this.securityInfos.map((s) =>
           s.endpoint == sec.endpoint ? sec : s
         );
@@ -187,7 +187,7 @@ export default {
     deleteSec(sec) {
       this.indexToRemove = this.securityInfos.indexOf(sec);
       this.axios
-        .delete("api/security/clients/" + encodeURIComponent(sec.endpoint))
+        .delete("/api/security/clients/" + encodeURIComponent(sec.endpoint))
         .then(() => {
           this.securityInfos.splice(this.indexToRemove, 1);
         });
