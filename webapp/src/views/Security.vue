@@ -120,8 +120,8 @@
   </v-data-table>
 </template>
 <script>
-import SecurityInfoDialog from "@leshan-server-core-demo/components/security/SecurityInfoDialog.vue";
-import SecurityInfoChip from "@leshan-server-core-demo/components/security/SecurityInfoChip.vue";
+import SecurityInfoDialog from "@/components/security/SecurityInfoDialog.vue";
+import SecurityInfoChip from "@/components/security/SecurityInfoChip.vue";
 
 export default {
   components: { SecurityInfoDialog, SecurityInfoChip },

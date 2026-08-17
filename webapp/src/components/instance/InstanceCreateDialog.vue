@@ -27,7 +27,7 @@
           <!-- instance if field -->
           <v-row>
             <v-col cols="12" md="2">
-              <v-subheader>Instance Id </v-subheader>
+              <h3>Instance Id </h3>
             </v-col>
             <v-col cols="12" md="9">
               <v-text-field

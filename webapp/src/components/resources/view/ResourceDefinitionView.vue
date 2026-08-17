@@ -17,42 +17,40 @@
       Model :
     </v-card-subtitle>
     <v-card-text>
-      <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th class="text-left">
-                Operations
-              </th>
-              <th class="text-left">
-                Instances
-              </th>
-              <th class="text-left">
-                Mandatory
-              </th>
-              <th class="text-left">
-                Type
-              </th>
-              <th class="text-left">
-                Range or enumeration
-              </th>
-              <th class="text-left">
-                Units
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="pointer-events: none" class="text-capitalize">
-              <td>{{ resourcedef.operations }}</td>
-              <td>{{ resourcedef.instancetype }}</td>
-              <td>{{ resourcedef.mandatory }}</td>
-              <td>{{ resourcedef.type }}</td>
-              <td>{{ resourcedef.range }}</td>
-              <td>{{ resourcedef.units }}</td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
+      <table class="v-table">
+        <thead>
+          <tr>
+            <th class="text-left">
+              Operations
+            </th>
+            <th class="text-left">
+              Instances
+            </th>
+            <th class="text-left">
+              Mandatory
+            </th>
+            <th class="text-left">
+              Type
+            </th>
+            <th class="text-left">
+              Range or enumeration
+            </th>
+            <th class="text-left">
+              Units
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="pointer-events: none" class="text-capitalize">
+            <td>{{ resourcedef.operations }}</td>
+            <td>{{ resourcedef.instancetype }}</td>
+            <td>{{ resourcedef.mandatory }}</td>
+            <td>{{ resourcedef.type }}</td>
+            <td>{{ resourcedef.range }}</td>
+            <td>{{ resourcedef.units }}</td>
+          </tr>
+        </tbody>
+      </table>
     </v-card-text>
     <!-- description -->
     <v-card-subtitle class="pb-0 text-decoration-underline">

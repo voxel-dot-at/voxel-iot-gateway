@@ -79,7 +79,7 @@
   </v-dialog>
 </template>
 <script>
-import PathsInput from "@leshan-server-core-demo/components/path/PathsInput.vue";
+import PathsInput from "@/components/path/PathsInput.vue";
 
 export default {
   components: { PathsInput },

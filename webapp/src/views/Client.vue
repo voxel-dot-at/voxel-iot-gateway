@@ -56,18 +56,14 @@
       <!-- Composite Operations-->
       <span>
         <v-list v-if="registration && registration.lwM2mVersion != '1.0'">
-          <v-list-item-group>
-            <v-list-item
-              :to="'/clients/' + $route.params.endpoint + '/composite'"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon>{{ $icons.mdiFormatListCheckbox }}</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Composite Operations</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
+          <v-list-item
+            :to="'/clients/' + $route.params.endpoint + '/composite'"
+          >
+            <template v-slot:prepend>
+              <v-icon class="me-2">{{ $icons.mdiFormatListCheckbox }}</v-icon>
+            </template>
+            <v-list-item-title>Composite Operations</v-list-item-title>
+          </v-list-item>
         </v-list>
         <v-divider />
       </span>
@@ -102,6 +98,7 @@
 import ClientInfo from "../components/ClientInfo.vue";
 import ClientSetting from "../components/ClientSetting.vue";
 import ObjectSelector from "../components/object/ObjectSelector.vue";
+
 
 // get models for this endpoint
 export default {
