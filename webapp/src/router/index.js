@@ -74,7 +74,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/m2m'),
+  history: createWebHistory('/'),
   routes,
 });
 

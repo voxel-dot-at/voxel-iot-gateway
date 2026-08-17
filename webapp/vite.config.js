@@ -47,7 +47,7 @@ export default defineConfig({
     proxy: {
       "/api": {
         // 8080 is the default port for leshan-server-demo if you change it in development phase you need to change this value too.
-        target: "http://localhost:8088/m2m",
+        target: "http://localhost:8088",
         ws: true,
         changeOrigin: true,
       },
@@ -68,5 +68,5 @@ export default defineConfig({
     extensions: [".js", ".vue"],
     dedupe: ["vue"],
   },
-    base: "/m2m"
+    base: "/"
 });
