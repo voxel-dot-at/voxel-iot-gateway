@@ -15,36 +15,33 @@
     <div title="Timeout used to send request">
       <v-select
         single-line
-        density="compact"
-        variant="plain"
-        :prefix="$vuetify.display.mdOnly ? null : 'Timeout :'"
+        hide-details
+        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Timeout :'"
         :items="timeoutList"
         item-value="val"
         item-text="txt"
         v-model="timeout"
-        :append-inner-icon="$icons.mdiHelpCircleOutline"
-        @click:append-inner="openTimeoutHelps"
-      />
+        :append-outer-icon="$vuetify.icons.values.account"
+        @click:append-outer="openTimeoutHelps"
+      ></v-select>
     </div>
     <div title="Content Format used to send request handling single value">
       <v-select
         single-line
-        density="compact"
-        :prefix="$vuetify.display.mdOnly ? null : 'Single Value :'"
-        variant="plain"
+        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Single Value :'"
+        hide-details
         :items="singleFormatList"
         v-model="singleformat"
-      />
+      ></v-select>
     </div>
     <div title="Content Format used to send request handling multiple values">
       <v-select
         single-line
-        density="compact"
-        variant="plain"
-        :prefix="$vuetify.display.mdOnly ? null : 'Multi Value :'"
+        hide-details
+        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Multi Value :'"
         :items="multiFormatList"
         v-model="multiformat"
-      />
+      ></v-select>
     </div>
   </div>
 </template>

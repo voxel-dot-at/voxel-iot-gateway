@@ -13,28 +13,28 @@
 <template>
   <v-dialog
     v-model="show"
-    hide-overlay
+    overlay="false"
     fullscreen
     transition="dialog-bottom-transition"
-  >
+    >
     <v-card>
       <!-- dialog title -->
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title class="headline grey-lighten-2">
         Create new Instance for Object {{ objectdef.name }} ({{ objectdef.id }})
       </v-card-title>
       <v-card-text>
         <v-form ref="form" @submit.prevent="write">
           <!-- instance if field -->
-          <v-row dense>
+          <v-row>
             <v-col cols="12" md="2">
-              <div>Instance Id </div>
+              <v-subheader>Instance Id </v-subheader>
             </v-col>
             <v-col cols="12" md="9">
               <v-text-field
                 v-model="instance.id"
                 label="Integer"
                 hint="Let this field empty to let the client choose the instance ID"
-              />
+              ></v-text-field>
             </v-col>
           </v-row>
 
@@ -44,16 +44,16 @@
             :key="resourcedef.id"
             v-model="instance.resources[resourcedef.id]"
             :resourcedef="resourcedef"
-          />
+          ></resource-input>
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
+        <v-spacer></v-spacer>
         <!-- dialog buttons-->
-        <v-btn variant="text" @click="create">
+        <v-btn text @click="create">
           Create
         </v-btn>
-        <v-btn variant="text" @click="show = false">
+        <v-btn text @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -69,7 +69,7 @@ import ResourceInput from "../resources/input/LabelledResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    modelValue: Boolean, // control if the dialog is displayed (v-model)
+    value: Boolean, // control if the dialog is displayed (v-model)
     objectdef: Object, // the model of the object
   },
   data() {
@@ -78,7 +78,7 @@ export default {
     };
   },
   watch: {
-    modelValue(v) {
+    value(v) {
       // reset local state when dialog is open
       if (v) {
         (this.instance = { id: null, resources: {} }), (this.id = null);
@@ -88,10 +88,10 @@ export default {
   computed: {
     show: {
       get() {
-        return this.modelValue;
+        return this.value;
       },
       set(value) {
-        this.$emit("update:modelValue", value);
+        this.$emit("input", value);
       },
     },
     writableResourceDef() {

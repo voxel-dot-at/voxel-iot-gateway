@@ -12,7 +12,7 @@
   ----------------------------------------------------------------------------->
 <template>
   <!-- object info -->
-  <v-sheet color="grey lighten-5" class="pa-4" width="100%" v-if="objectdef">
+  <v-sheet color="grey-lighten-5" class="pa-4" width="100%" v-if="objectdef">
     <div>
       <h3>
         <object-icon :objectId="objectdef.id" /> {{ objectdef.name }}-v{{
@@ -28,7 +28,7 @@
 
       <p style="white-space: pre-wrap">{{ objectdef.description }}</p>
     </div>
-    <v-divider />
+    <v-divider></v-divider>
     <div v-for="instanceId in instances" :key="objectdef.id + '/' + instanceId">
       <instance-view
         :objectdef="objectdef"

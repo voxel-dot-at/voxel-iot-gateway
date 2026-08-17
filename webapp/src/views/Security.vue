@@ -15,40 +15,34 @@
     :headers="headers"
     :items="securityInfos"
     item-key="endpoint"
-    :sort-by="[{ key: 'endpoint', order: 'asc' }]"
+    sort-by="endpoint"
     class="elevation-0"
-    density="compact"
     :search="search"
   >
     <template v-slot:top>
-      <v-toolbar flat density="compact" color="white">
-        <v-toolbar-title v-if="$vuetify.display.smAndUp"
+      <v-toolbar>
+        <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp"
           >Security Information</v-toolbar-title
         >
         <v-divider
           class="mx-4"
           inset
           vertical
-          v-if="$vuetify.display.smAndUp"
-        />
+          v-if="$vuetify.breakpoint.smAndUp"
+        ></v-divider>
         <v-text-field
           v-model="search"
-          :append-inner-icon="$icons.mdiMagnify"
+          :append-icon="$icons.mdiMagnify"
           label="Search"
           single-line
-          variant="plain"
+          hide-details
           class="pa-2"
           clearable
-        />
+        ></v-text-field>
         <!-- add security info button-->
-        <v-btn
-          color="black"
-          variant="elevated"
-          class="mb-2"
-          @click.stop="openNewSec()"
-        >
-          {{ $vuetify.display.smAndDown ? "" : "Add Security Information" }}
-          <v-icon :end="!$vuetify.display.smAndDown">
+        <v-btn color="dark" class="mb-2" @click.stop="openNewSec()">
+          {{ $vuetify.breakpoint.smAndDown ? "" : "Add Security Information" }}
+          <v-icon :right="!$vuetify.breakpoint.smAndDown" color="dark">
             {{ $icons.mdiKeyPlus }}
           </v-icon>
         </v-btn>
@@ -72,7 +66,7 @@
       <div v-if="item.tls">
         <div
           v-if="item.tls.mode == 'psk'"
-          style="word-break: break-all"
+          style="word-break:break-all;"
           class="pa-1"
         >
           <strong>Identity:</strong>
@@ -83,7 +77,7 @@
         </div>
         <div
           v-if="item.tls.mode == 'rpk'"
-          style="word-break: break-all"
+          style="word-break:break-all;"
           class="pa-1"
         >
           <strong>Public Key:</strong>
@@ -91,7 +85,7 @@
         </div>
         <div
           v-if="item.tls.mode == 'x509'"
-          style="word-break: break-all"
+          style="word-break:break-all;"
           class="pa-1"
         >
           <strong>X509 certificate with CN equals :</strong>
@@ -126,18 +120,18 @@
   </v-data-table>
 </template>
 <script>
-import SecurityInfoDialog from "@leshan-demo-servers-shared/components/security/SecurityInfoDialog.vue";
-import SecurityInfoChip from "@leshan-demo-servers-shared/components/security/SecurityInfoChip.vue";
+import SecurityInfoDialog from "@leshan-server-core-demo/components/security/SecurityInfoDialog.vue";
+import SecurityInfoChip from "@leshan-server-core-demo/components/security/SecurityInfoChip.vue";
 
 export default {
   components: { SecurityInfoDialog, SecurityInfoChip },
   data: () => ({
     dialogOpened: false,
     headers: [
-      { title: "Endpoint", key: "endpoint" },
-      { title: "Security mode", key: "mode" },
-      { title: "Details", key: "details", sortable: false, width: "60%" },
-      { title: "Actions", key: "actions", sortable: false },
+      { text: "Endpoint", value: "endpoint" },
+      { text: "Security mode", value: "mode" },
+      { text: "Details", value: "details", sortable: false, width: "60%" },
+      { text: "Actions", value: "actions", sortable: false },
     ],
     search: "",
     securityInfos: [],
@@ -162,7 +156,7 @@ export default {
           (s) => s.endpoint == cred.endpoint
         );
         if (index != -1) {
-          this.securityInfos[index] = cred;
+          this.$set(this.securityInfos, index, cred);
         } else {
           this.securityInfos.push(cred);
         }

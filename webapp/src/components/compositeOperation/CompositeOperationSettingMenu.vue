@@ -12,8 +12,8 @@
   ----------------------------------------------------------------------------->
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" offset-y>
-    <template v-slot:activator="{ attrs }">
-      <slot name="activator" :attrs="attrs" />
+    <template v-slot:activator="{ on, attrs }">
+      <slot name="activator" :attrs="attrs" :on="on" />
     </template>
     <v-card>
       <v-list>
@@ -26,10 +26,9 @@
         <v-list-item>
           <v-list-item-action>
             <v-select
-              density="compact"
               :items="compositePathFormatList"
               v-model="compositePathFormat"
-            />
+            ></v-select>
           </v-list-item-action>
         </v-list-item>
         <v-list-item>
@@ -42,10 +41,9 @@
           <v-list-item-action>
             <v-select
               single-line
-              density="compact"
               :items="compositeNodeFormatList"
               v-model="compositeNodeFormat"
-            />
+            ></v-select>
           </v-list-item-action>
         </v-list-item>
       </v-list>

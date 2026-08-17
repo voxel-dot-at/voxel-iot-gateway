@@ -11,7 +11,7 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-sheet color="grey lighten-5" class="pa-4" width="100%">
+  <v-sheet color="grey-lighten-5" class="pa-4" width="100%">
     <div>
       <h3 class="text-capitalize">
         <composite-object-icons :compositeObject="compositeObject" />{{
@@ -27,21 +27,22 @@
           size="small"
           v-show="state.compositeObserved[compositeObservationKey]"
           :title="compositeObservationKey + ' observed'"
-        >{{ $icons.mdiEyeOutline }}</v-icon>
+          >{{ $icons.mdiEyeOutline }}</v-icon
+        >
       </h3>
       <p>
         This Composite object is composed of following resources :
         {{ compositeObject.paths.join(", ") }}
       </p>
     </div>
-    <v-divider />
+    <v-divider></v-divider>
 
     <div v-for="(node, path) in lwm2mNodes" :key="path">
       <h4 class="pa-1">
         {{ path }}
         <span
           v-if="node.instanceNotAvailable"
-          class="subtitle-2 grey--text text--darken-1"
+          class="subtitle-2 grey text-darken-1"
         >
           - Instance {{ node.path.objectinstanceid }} was not reported as
           available by the client
@@ -64,7 +65,7 @@
       <span v-else-if="node.path.type == 'object'">
         <div v-for="instance in node.instances" :key="instance.path">
           <h5 class="pa-1">Instance {{ instance.id }}</h5>
-          <v-expansion-panels accordion multiple density="compact" tile>
+          <v-expansion-panels accordion multiple>
             <resource-expansion-panel
               v-for="resource in instance.resources"
               :key="resource.path"
@@ -76,7 +77,7 @@
       </span>
       <!-- object instance-->
       <div v-else-if="node.path.type == 'objectinstance'">
-        <v-expansion-panels accordion multiple density="compact" tile>
+        <v-expansion-panels accordion multiple>
           <resource-expansion-panel
             v-for="resource in node.resources"
             :key="resource.path"
@@ -87,7 +88,7 @@
       </div>
       <!-- object instance-->
       <div v-else-if="node.path.type == 'resource'">
-        <v-expansion-panels accordion multiple density="compact" tile>
+        <v-expansion-panels accordion multiple>
           <resource-expansion-panel
             :resource="node.resource"
             :endpoint="endpoint"
@@ -96,7 +97,7 @@
       </div>
       <!-- resource instance case -->
       <div v-else-if="node.path.type == 'resourceinstance'">
-        <v-expansion-panels accordion multiple density="compact" tile>
+        <v-expansion-panels accordion multiple>
           <resource-instance-expansion-panel
             :resource="node.resource"
             :resourceInstanceId="node.resourceInstanceId"

@@ -15,15 +15,15 @@
     v-if="resourcedef.instancetype != 'single'"
     :resourcedef="resourcedef"
     :hint="hint"
-    :model-value="modelValue"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
   <single-value-input
     v-else
     :resourcedef="resourcedef"
     :hint="hint"
-    :model-value="modelValue"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
 </template>
 <script>
@@ -36,7 +36,7 @@ import MultiInstanceResourceInput from "./MultiInstanceResourceInput.vue";
 export default {
   components: { SingleValueInput, MultiInstanceResourceInput },
   props: {
-    modelValue: null, // the input value for this resource (v-model)
+    value: null, // the input value for this resource (v-model)
     resourcedef: Object, // the model of the resource
     hint: { type: String, default: null }, // hint displayed on `?` tooltip. If `null`, the "?" icon is not displayed"
   },

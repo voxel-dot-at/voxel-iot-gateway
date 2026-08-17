@@ -29,15 +29,14 @@
           size="small"
           v-show="state.observed[instancePath]"
           :title="'Instance ' + instancePath + ' observed'"
-        >{{ $icons.mdiEyeOutline }}</v-icon>
+          >{{ $icons.mdiEyeOutline }}</v-icon
+        >
       </span>
     </h4>
 
     <v-expansion-panels
       accordion
       multiple
-      density="compact"
-      tile
       v-if="objectdef && typeof instanceId == 'number' && endpoint"
     >
       <resource-expansion-panel

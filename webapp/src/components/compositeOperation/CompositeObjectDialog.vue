@@ -13,13 +13,13 @@
 <template>
   <v-dialog
     v-model="show"
-    hide-overlay
+    overlay="false"
     fullscreen
     transition="dialog-bottom-transition"
-  >
+    >
     <v-card>
       <!-- Title -->
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title class="headline grey-lighten-2">
         <span>{{
           editMode ? "Edit Composite Object" : "Add Composite Object"
         }}</span>
@@ -56,22 +56,22 @@
             required
             :autofocus="!editMode"
             :disabled="editMode"
-          />
+          ></v-text-field>
           <paths-input v-model="compositeObject.paths" />
         </v-form>
       </v-card-text>
 
       <!-- Buttons -->
       <v-card-actions>
-        <v-spacer />
+        <v-spacer></v-spacer>
         <v-btn
-          variant="text"
+          text
           @click="$emit(editMode ? 'edit' : 'new', compositeObject)"
           :disabled="!valid"
         >
           {{ editMode ? "Save" : "Add" }}
         </v-btn>
-        <v-btn variant="text" @click="show = false">
+        <v-btn text @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -79,12 +79,12 @@
   </v-dialog>
 </template>
 <script>
-import PathsInput from "@leshan-demo-servers-shared/components/path/PathsInput.vue";
+import PathsInput from "@leshan-server-core-demo/components/path/PathsInput.vue";
 
 export default {
   components: { PathsInput },
   props: {
-    modelValue: Boolean /*open/close dialog*/,
+    value: Boolean /*open/close dialog*/,
     initialValue: Object, // initial value : for edit mode.
     alreadyUsedName: { type: Array, default: () => [] }, // already used name to avoid to create 2 composite Object with same name
   },
@@ -112,15 +112,15 @@ export default {
   computed: {
     show: {
       get() {
-        return this.modelValue;
+        return this.value;
       },
       set(value) {
-        this.$emit("update:modelValue", value);
+        this.$emit("input", value);
       },
     },
   },
   watch: {
-    modelValue(v) {
+    value(v) {
       if (v) {
         // reset validation and set initial value when dialog opens
         if (this.$refs.form) this.$refs.form.resetValidation();

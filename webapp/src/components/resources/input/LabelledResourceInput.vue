@@ -11,25 +11,25 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-row dense>
+  <v-row>
     <v-col cols="12" md="2">
-      <div v-if="resourcedef.mandatory"
-        ><strong>{{ resourcedef.name }} *</strong></div
+      <v-subheader v-if="resourcedef.mandatory"
+        ><strong>{{ resourcedef.name }} *</strong></v-subheader
       >
-      <div v-else>{{ resourcedef.name }} </div>
+      <v-subheader v-else>{{ resourcedef.name }} </v-subheader>
     </v-col>
     <v-col cols="11" md="9">
       <resource-input
         :resourcedef="resourcedef"
         :hint="hint(resourcedef)"
-        :model-value="modelValue"
-        @update:modelValue="$emit('update:modelValue', $event)"
+        :value="value"
+        @input="$emit('input', $event)"
       />
     </v-col>
     <v-col cols="1" md="1">
       <v-tooltip left>
-        <template v-slot:activator="{ attrs }">
-          <v-icon v-bind="attrs">
+        <template v-slot:activator="{ on }">
+          <v-icon v-on="on">
             {{ $icons.mdiHelpCircleOutline }}
           </v-icon>
         </template>
@@ -47,7 +47,7 @@ import ResourceInput from "./ResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    modelValue: null, // the input value for this resource (v-model)
+    value: null, // the input value for this resource (v-model)
     resourcedef: Object, // the model of the resource
   },
   methods: {

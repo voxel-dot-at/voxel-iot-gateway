@@ -11,86 +11,85 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-expansion-panels>
-    <v-expansion-panel>
+  <v-expansion-panel>
+    <v-expansion-panel-title style="min-height: 32px" class="pa-3">
       <template v-slot:default="{ expanded }">
-        <v-expansion-panel-title style="min-height: 32px" class="pa-3">
-          <!-- min-width is needed for avoid shift about truncated text 
-            see : https://stackoverflow.com/a/36247448/5088764
-            -->
-          <v-container class="pa-0" style="min-width: 0">
-            <v-row>
-              <v-col cols="7" lg="3" align-self="center" class="pa-2"
-                >{{ resource.def.name }}
-              </v-col>
-              <v-col
-                cols="4"
-                lg="1"
-                align-self="center"
-                class="pa-2 text--disabled"
-                >{{ resourceInstancePath }}
-              </v-col>
-              <v-col
-                cols="1"
-                lg="1"
-                align-self="center"
-                class="pa-2 text--disabled"
-              >
-                <v-icon
-                  size="x-small"
-                  v-show="state.observed[resourceInstancePath]"
-                  :title="
-                    'Resource Instance' + resourceInstancePath + ' observed'
-                  "
-                >{{ $icons.mdiEyeOutline }}</v-icon>
-              </v-col>
+        <!-- min-width is needed for avoid shift about truncated text 
+          see : https://stackoverflow.com/a/36247448/5088764
+          -->
+        <v-container class="pa-0" style="min-width: 0">
+          <v-row>
+            <v-col cols="7" lg="3" align-self="center" class="pa-2"
+              >{{ resource.def.name }}
+            </v-col>
+            <v-col
+              cols="4"
+              lg="1"
+              align-self="center"
+              class="pa-2 text-disabled"
+              >{{ resourceInstancePath }}
+            </v-col>
+            <v-col
+              cols="1"
+              lg="1"
+              align-self="center"
+              class="pa-2 text-disabled"
+            >
+              <v-icon
+                size="x-small"
+                v-show="state.observed[resourceInstancePath]"
+                :title="
+                  'Resource Instance' + resourceInstancePath + ' observed'
+                "
+                >{{ $icons.mdiEyeOutline }}</v-icon
+              ></v-col
+            >
 
-              <v-col cols="7" lg="3" align-self="center" class="pa-0">
-                <v-fade-transition leave-absolute>
-                  <resource-instance-control
-                    v-show="!expanded"
-                    :resourcedef="resource.def"
-                    :endpoint="endpoint"
-                    :resourcePath="resource.path"
-                    :instanceId="resourceInstanceId"
-                  />
-                </v-fade-transition>
-              </v-col>
-              <v-col
-                cols="5"
-                lg="4"
-                align-self="center"
-                class="pa-0"
-                :class="{
-                  'text--disabled': resourceInstanceValue
-                    ? resourceInstanceValue.supposed
-                    : false,
-                }"
-              >
-                <v-fade-transition leave-absolute>
-                  <simple-resource-instance-view
-                    class="pr-3 text-truncate"
-                    v-show="!expanded"
-                    :resourceInstance="resourceInstanceValue"
-                    :resourcedef="resource.def"
-                  />
-                </v-fade-transition>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <resource-instance-view
-            :endpoint="endpoint"
-            :resourceInstance="resourceInstanceValue"
-            :resourcedef="resource.def"
-            :resourcePath="resource.path"
-            :resourceInstanceId="resourceInstanceId"
-          />
-        </v-expansion-panel-text>
+            <v-col cols="7" lg="3" align-self="center" class="pa-0">
+              <v-fade-transition leave-absolute>
+                <resource-instance-control
+                  v-show="!expanded"
+                  :resourcedef="resource.def"
+                  :endpoint="endpoint"
+                  :resourcePath="resource.path"
+                  :instanceId="resourceInstanceId"
+                />
+              </v-fade-transition>
+            </v-col>
+            <v-col
+              cols="5"
+              lg="4"
+              align-self="center"
+              class="pa-0"
+              :class="{
+                'text-disabled': resourceInstanceValue
+                  ? resourceInstanceValue.supposed
+                  : false,
+              }"
+            >
+              <v-fade-transition leave-absolute>
+                <simple-resource-instance-view
+                  class="pr-3 text-truncate"
+                  v-show="!expanded"
+                  :resourceInstance="resourceInstanceValue"
+                  :resourcedef="resource.def"
+                />
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </v-container>
       </template>
-    </v-expansion-panel>
-  </v-expansion-panels>
+    </v-expansion-panel-title>
+    <v-expansion-panel-text>
+      <resource-instance-view
+        :endpoint="endpoint"
+        :resourceInstance="resourceInstanceValue"
+        :resourcedef="resource.def"
+        :resourcePath="resource.path"
+        :resourceInstanceId="resourceInstanceId"
+      />
+    </v-expansion-panel-text>
+  </v-expansion-panel>
 </template>
 <script>
 import ResourceInstanceControl from "../ResourceInstanceControl.vue";

@@ -11,44 +11,47 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <table v-if="resource" class="simple-table">
-    <thead>
-      <tr>
-        <th class="px-2 text-left">Id</th>
-        <th></th>
-        <th></th>
-        <th class="text-left" style="width: 100%">Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="(value, id) in resource.vals"
-        :key="id"
-        style="background-color: transparent !important"
-      >
-        <td class="px-2 text--disabled">{{ id }}</td>
-        <td class="px-2">
-          <v-icon
-            class="pa-0"
-            size="x-small"
-            v-show="state.observed[instancePath(id)]"
-            :title="'Instance ' + instancePath(id) + ' observed'"
-          >{{ $icons.mdiEyeOutline }}</v-icon>
-        </td>
-        <td class="px-2" style="white-space: nowrap">
-          <resource-instance-control
-            :endpoint="endpoint"
-            :resourcedef="resourcedef"
-            :resourcePath="path"
-            :instanceId="Number(id)"
-          />
-        </td>
-        <td :class="{ 'text--disabled': value.supposed }">
-          {{ valueAsString(value.val) }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <v-simple-table v-if="resource">
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="px-2 text-left">Id</th>
+          <th></th>
+          <th></th>
+          <th class="text-left" style="width: 100%">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(value, id) in resource.vals"
+          :key="id"
+          style="background-color: transparent !important"
+        >
+          <td class="px-2 text-disabled">{{ id }}</td>
+          <td class="px-2">
+            <v-icon
+              class="pa-0"
+              size="x-small"
+              v-show="state.observed[instancePath(id)]"
+              :title="'Instance ' + instancePath(id) + ' observed'"
+              >{{ $icons.mdiEyeOutline }}</v-icon
+            >
+          </td>
+          <td class="px-2" style="white-space: nowrap">
+            <resource-instance-control
+              :endpoint="endpoint"
+              :resourcedef="resourcedef"
+              :resourcePath="path"
+              :instanceId="Number(id)"
+            />
+          </td>
+          <td :class="{ 'text-disabled': value.supposed }">
+            {{ valueAsString(value.val) }}
+          </td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
 </template>
 <script>
 import { valueToString } from "../../../js/valueutils.js";

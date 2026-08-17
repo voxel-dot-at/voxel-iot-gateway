@@ -24,13 +24,14 @@ import {
   mdiCellphoneArrowDown,
   mdiCellphoneWireless,
   mdiDatabase,
-  mdiDatabaseRefresh,
+  mdiDatabaseSyncOutline,
+  mdiDevices,
   mdiDoor,
   mdiFolderMultipleOutline,
   mdiGauge,
-  mdiGestureTap,
+  mdiGestureTapButton,
   mdiLightbulbOnOutline,
-  mdiFormatListChecks,
+  mdiListStatus,
   mdiMapMarker,
   mdiPackageDown,
   mdiPaletteOutline,
@@ -41,12 +42,14 @@ import {
   mdiSignalDistanceVariant,
   mdiSignalVariant,
   mdiSim,
-  mdiTextbox,
+  mdiSimOutline,
+  mdiTextBoxOutline,
+  mdiTextRecognition,
   mdiThermometer,
-  mdiTimer,
+  mdiTimerOutline,
   mdiToggleSwitch,
   mdiWaterPercent,
-  mdiWidgets,
+  mdiWidgetsOutline,
 } from "@mdi/js";
 
 export default {
@@ -65,7 +68,7 @@ export default {
         case 2: // ACL
           return mdiShieldCheckOutline;
         case 3: // device
-          return mdiServer;
+          return mdiDevices;
         case 4: // connectivity monitoring
           return mdiSignalVariant;
         case 5: // firmware update
@@ -83,15 +86,15 @@ export default {
         case 12: // WLAN connectivity
           return mdiCellphoneWireless;
         case 13: // LWM2M Bearer Selection
-          return mdiSim;
+          return mdiSimOutline;
         case 14: // LWM2M Software Component
           return mdiPuzzleOutline;
         case 15: // DevCapMgmt
-          return mdiWidgets;
+          return mdiWidgetsOutline;
         case 16: // Portfolio
           return mdiFolderMultipleOutline;
         case 19: // BinaryAppDataContainer
-          return mdiDatabaseRefresh;
+          return mdiDatabaseSyncOutline;
         case 3300: // General Sensor
           return mdiGauge;
         case 3303: // Temperature
@@ -109,21 +112,21 @@ export default {
         case 3338: // Buzzer
           return mdiBellRing;
         case 3340: // Timer
-          return mdiTimer;
+          return mdiTimerOutline;
         case 3341: // Addressable Text Display
-          return mdiTextbox;
+          return mdiTextRecognition;
         case 3342: // On/Off Switch
           return mdiToggleSwitch;
         case 3347: // Push Button
-          return mdiGestureTap;
+          return mdiGestureTapButton;
         case 3441: // LWM2M v1.0 Test Object
-          return mdiFormatListChecks;
+          return mdiListStatus;
         case 3442: // LWM2M v1.1 Test Object
-          return mdiFormatListChecks;
+          return mdiListStatus;
         case 3351: // powerupLog
           return mdiCardTextOutline;
         case 10259: // System Log
-          return mdiTextbox;
+          return mdiTextBoxOutline;
         case 10260: // RDB (Runtime Database)
           return mdiDatabase;
         case 10351: // Door

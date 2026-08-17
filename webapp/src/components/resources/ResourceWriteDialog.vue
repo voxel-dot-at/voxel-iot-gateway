@@ -13,12 +13,12 @@
 <template>
   <v-dialog
     v-model="show"
-    hide-overlay
+    overlay="false"
     fullscreen
     transition="dialog-bottom-transition"
-  >
+    >
     <v-card>
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title class="headline grey-lighten-2">
         Write "{{ resourcedef.name }}" Resource
       </v-card-title>
       <v-card-text>
@@ -35,11 +35,11 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
-        <v-btn variant="text" @click="write">
+        <v-spacer></v-spacer>
+        <v-btn text @click="write">
           Write
         </v-btn>
-        <v-btn variant="text" @click="show = false">
+        <v-btn text @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -56,7 +56,7 @@ import ResourceInput from "./input/ResourceInput.vue";
 export default {
   components: { ResourceInput },
   props: {
-    modelValue: Boolean, // control if the dialog is displayed (v-model)
+    value: Boolean, // control if the dialog is displayed (v-model)
     resourcedef: Object, // the model of the resource
     path: String, // the path of the resource
   },
@@ -68,15 +68,15 @@ export default {
   computed: {
     show: {
       get() {
-        return this.modelValue;
+        return this.value;
       },
       set(value) {
-        this.$emit("update:modelValue", value);
+        this.$emit("input", value);
       },
     },
   },
   watch: {
-    modelValue(v) {
+    value(v) {
       // reset local state when dialog is open
       if (v) this.resourceValue = null;
     },

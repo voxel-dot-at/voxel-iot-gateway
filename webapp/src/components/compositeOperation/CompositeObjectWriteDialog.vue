@@ -13,13 +13,13 @@
 <template>
   <v-dialog
     v-model="show"
-    hide-overlay
+    overlay="false"
     fullscreen
     transition="dialog-bottom-transition"
-  >
+    >
     <v-card>
       <!-- dialog title -->
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title class="headline grey-lighten-2">
         Write Composite Object "{{ compositeObject.name }}".
       </v-card-title>
       <v-card-text>
@@ -38,24 +38,24 @@
                 v-if="node.path.type == 'resource'"
                 v-model="nodesValue[node.path.toString()]"
                 :resourcedef="node.resource.def"
-              />
+              ></labelled-resource-input>
               <!--resource instance field-->
               <labelled-resource-instance-input
                 v-else-if="node.path.type == 'resourceinstance'"
                 v-model="nodesValue[node.path.toString()]"
                 :resourcedef="node.resource.def"
-              />
+              ></labelled-resource-instance-input>
             </div>
           </v-container>
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
+        <v-spacer></v-spacer>
         <!-- dialog buttons-->
-        <v-btn variant="text" @click="write">
+        <v-btn text @click="write">
           Write
         </v-btn>
-        <v-btn variant="text" @click="show = false">
+        <v-btn text @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -72,7 +72,7 @@ import LabelledResourceInstanceInput from "../resources/input/LabelledResourceIn
 export default {
   components: { LabelledResourceInput, LabelledResourceInstanceInput },
   props: {
-    modelValue: Boolean, // control if the dialog is displayed (v-model)
+    value: Boolean, // control if the dialog is displayed (v-model)
     compositeObject: Object, // the composite Object
     nodes: Object, // LWM2M Nodes indexed by path
   },
@@ -83,7 +83,7 @@ export default {
     };
   },
   watch: {
-    modelValue(v) {
+    value(v) {
       // reset local state when dialog is open
       if (v) this.nodesValue = {};
     },
@@ -91,10 +91,10 @@ export default {
   computed: {
     show: {
       get() {
-        return this.modelValue;
+        return this.value;
       },
       set(value) {
-        this.$emit("update:modelValue", value);
+        this.$emit("input", value);
       },
     },
     ignoredeNodes() {

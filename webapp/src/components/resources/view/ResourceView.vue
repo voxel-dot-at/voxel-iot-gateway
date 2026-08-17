@@ -11,13 +11,13 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-row color="grey lighten-5">
+  <v-row color="grey-lighten-5">
     <v-col cols="12" lg="6" xl="5">
       <resource-definition-view :resourcedef="resourcedef" />
     </v-col>
 
     <v-col>
-      <v-card variant="plain">
+      <v-card elevation="0">
         <!-- Resource Controls -->
         <resource-control
           :resourcedef="resourcedef"
@@ -29,7 +29,7 @@
         <v-card-text
           v-if="resourcedef.instancetype == 'single'"
           class="font-weight-bold"
-          :class="{ 'text--primary': resource && !resource.supposed }"
+          :class="{ 'text-primary': resource && !resource.supposed }"
         >
           {{ resourceValueAsString }}
         </v-card-text>

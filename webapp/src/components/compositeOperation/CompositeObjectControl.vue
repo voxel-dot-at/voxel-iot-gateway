@@ -17,7 +17,7 @@
     >
     <request-button @on-click="stopObserve" title="Passive Cancel Obverse">
       <v-icon size="small">{{
-        $icons.mdiEyeOffOutline
+        $icons.mdiEyeRemoveOutline
       }}</v-icon></request-button
     >
     <request-button @on-click="read" title="Composite Read">R</request-button>
@@ -31,14 +31,14 @@
       @write="write($event)"
     />
     <composite-operation-setting-menu>
-      <template v-slot:activator="{ attrs }">
+      <template v-slot:activator="{ on, attrs }">
         <v-btn
           class="ma-1"
           size="small"
-          tile
           min-width="0"
-          variant="plain"
+          elevation="0"
           v-bind="attrs"
+          v-on="on"
           title="Composite Operation Settings"
         >
           <v-icon size="small"> {{ $icons.mdiTune }}</v-icon>

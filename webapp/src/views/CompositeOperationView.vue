@@ -16,10 +16,10 @@
     v-if="$route.params.compositeObjectName != null"
     :objectdefs="objectdefs"
     :allInstances="allInstances"
-  />
+  ></router-view>
   <!-- all composite object view -->
   <div v-else>
-    <v-sheet color="grey lighten-5" class="pa-4" width="100%">
+    <v-sheet color="grey-lighten-5" class="pa-4" width="100%">
       <div>
         <h3>
           <v-icon>{{ $icons.mdiFormatListCheckbox }}</v-icon> Composite
@@ -35,7 +35,7 @@
           to expose Composite Operation.
         </p>
       </div>
-      <v-divider />
+      <v-divider></v-divider>
       <v-row>
         <v-col cols="0" md="3"> </v-col>
         <v-col cols="12" md="6">

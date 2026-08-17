@@ -11,42 +11,40 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-app-bar dark flat dense max-height="48">
-    <v-toolbar-title v-if="$vuetify.display.smAndUp">
-      <v-img :src="logoSrc" max-height="32" contain />
+  <v-app-bar color="dark" max-height="48">
+    <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp">
+      <v-img :src="require('@/assets/image/logo.png')" max-height="32" contain></v-img>
     </v-toolbar-title>
 
     <!-- See more details about why we hide-slider and replace it by custom css (active-class="active") :
          https://github.com/eclipse/leshan/issues/1134 -->
     <v-tabs
-      :right="$vuetify.display.smAndUp"
-      :grow="!$vuetify.display.smAndUp"
+      :right="$vuetify.breakpoint.smAndUp"
+      :grow="!$vuetify.breakpoint.smAndUp"
       hide-slider
     >
       <v-tab
         v-for="page in pages"
         :key="page.title"
+        fixed-tabs
         :to="page.route"
-        class="tab-item"
+        active-class="active"
       >
-        <v-icon>{{ page.icon }}</v-icon>
-        <span class="pl-2" v-if="$vuetify.display.smAndUp">
+        <v-icon>{{ page.icon }}</v-icon
+        ><span class="pl-2" v-if="$vuetify.breakpoint.smAndUp">
           {{ page.title }}
-        </span>
-      </v-tab>
+        </span></v-tab
+      >
     </v-tabs>
   </v-app-bar>
 </template>
 
 <script>
-import logo from '@/assets/image/logo.png';
-
 export default {
   data: function () {
     return {
-      logoSrc: logo,
       pages: [
-        { title: "Clients", route: "/clients", icon: this.$icons.mdiServer },
+        { title: "Clients", route: "/clients", icon: this.$icons.mdiDevices },
         {
           title: "Server",
           route: "/server",
@@ -78,7 +76,7 @@ export default {
   }
 }
 
-.tab-item.active {
+.active {
   border-spacing: 2px;
   border-bottom: 2px solid white;
   animation-name: becomeActive;

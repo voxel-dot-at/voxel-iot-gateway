@@ -13,7 +13,6 @@
 <template>
   <div>
     <v-data-table
-      density="compact"
       v-if="!loading"
       :headers="headers"
       :items="registrations"
@@ -22,36 +21,37 @@
       class="elevation-0 fill-height ma-3"
       @click:row="openLink"
       :search="search"
-      :sort-by="[{ key: 'registrationDate', order: 'desc' }]"
+      sort-by="registrationDate"
+      sort-desc
     >
       <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title v-if="$vuetify.display.smAndUp"
+        <v-toolbar>
+          <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp"
             >Registered Clients</v-toolbar-title
           >
           <v-divider
-            v-if="$vuetify.display.smAndUp"
+            v-if="$vuetify.breakpoint.smAndUp"
             class="mx-4"
             inset
             vertical
-          />
+          ></v-divider>
           <v-text-field
             v-model="search"
-            :append-inner-icon="$icons.mdiMagnify"
+            :append-icon="$icons.mdiMagnify"
             label="Search"
             single-line
-            variant="plain"
+            hide-details
             class="pa-2"
             clearable
-          />
+          ></v-text-field>
         </v-toolbar>
       </template>
       <!-- custom display for date column -->
       <template v-slot:item.registrationDate="{ item }">
-        {{ formatDate(item.registrationDate) }}
+        {{ new Date(item.registrationDate) | moment("MMM D, h:mm:ss A") }}
       </template>
       <template v-slot:item.lastUpdate="{ item }">
-        {{ formatDate(item.lastUpdate) }}
+        {{ new Date(item.lastUpdate) | moment("MMM D, h:mm:ss A") }}
       </template>
       <template v-slot:item.infos="{ item }">
         <client-info :registration="item" tooltipleft />
@@ -62,10 +62,10 @@
 
 <script>
 import ClientInfo from "../components/ClientInfo.vue";
-import dayjs from "dayjs";
 
 export default {
   components: { ClientInfo },
+  useSSE: true,
   name: "Clients",
   data: () => ({
     loading: true,
@@ -82,9 +82,6 @@ export default {
   methods: {
     openLink(reg) {
       this.$router.push(`/clients/${reg.endpoint}/3`);
-    },
-    formatDate(date) {
-      return dayjs(date).format("MMM D, h:mm:ss A");
     },
   },
   mounted() {
@@ -130,7 +127,7 @@ export default {
         )
       );
   },
-  beforeUnmount() {
+  beforeDestroy() {
     // close eventsource on destroy
     this.sse.disconnect();
   },

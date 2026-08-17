@@ -14,34 +14,34 @@
   <boolean-value-input
     v-if="resourcedef.type == 'boolean'"
     :resourcedef="resourcedef"
-    :model-value="value"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
   <opaque-value-input
     v-else-if="resourcedef.type == 'opaque'"
     :resourcedef="resourcedef"
-    :model-value="value"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
   <date-time-value-input
     v-else-if="resourcedef.type == 'time'"
     :resourcedef="resourcedef"
-    :model-value="value"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
   <obj-link-value-input
     v-else-if="resourcedef.type == 'objlnk'"
     :resourcedef="resourcedef"
-    :model-value="value"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
   <v-text-field
     v-else
     :label="resourcedef.type"
     :hint="hint"
     :suffix="resourcedef.units"
-    :model-value="value"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    :value="value"
+    @input="$emit('input', $event)"
   />
 </template>
 <script>
@@ -56,7 +56,7 @@ import ObjLinkValueInput from './ObjLinkValueInput.vue';
 export default {
   components: { BooleanValueInput, OpaqueValueInput, DateTimeValueInput, ObjLinkValueInput },
   props: {
-    modelValue: null, // the input value for this LWM2M Node (v-model)
+    value: null, // the input value for this LWM2M Node (v-model)
     resourcedef: Object, // the model of the resource
     hint: { type: String, default: null }, // hint displayed on `?` tooltip. If `null`, the "?" icon is not displayed"
   },
