@@ -16,19 +16,19 @@
       <v-select
         single-line
         hide-details
-        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Timeout :'"
+        :prefix="$display.md && !$display.lg ? null : 'Timeout :'"
         :items="timeoutList"
         item-value="val"
         item-text="txt"
         v-model="timeout"
-        :append-outer-icon="$vuetify.icons.values.account"
+        :append-outer-icon="$icons.mdiHelpCircleOutline"
         @click:append-outer="openTimeoutHelps"
       ></v-select>
     </div>
     <div title="Content Format used to send request handling single value">
       <v-select
         single-line
-        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Single Value :'"
+        :prefix="$display.md && !$display.lg ? null : 'Single Value :'"
         hide-details
         :items="singleFormatList"
         v-model="singleformat"
@@ -38,7 +38,7 @@
       <v-select
         single-line
         hide-details
-        :prefix="$vuetify.breakpoint.mdOnly ? null : 'Multi Value :'"
+        :prefix="$display.md && !$display.lg ? null : 'Multi Value :'"
         :items="multiFormatList"
         v-model="multiformat"
       ></v-select>

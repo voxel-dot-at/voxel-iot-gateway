@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "serve": "vite --host 0.0.0.0",
-    "build": "vite build --emptyOutDir",
+    "build": "vite build --emptyOutDir --sourcemap inline --minify false",
     "preview": "vite preview  --host 0.0.0.0",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "sbom_maven": "echo 'SBOM generation skipped'"
@@ -20,6 +20,7 @@
     "vue": "^3.5.0",
     "vue-preferences": "^3.0.0",
     "vue-router": "^4.5.0",
+    "vue-sse": "^2.5.2",
     "vuetify": "^4.1.9",
     "vuetify-dialog": "^2.0.17"
   },

@@ -26,11 +26,9 @@
     >
       <template v-slot:top>
         <v-toolbar>
-          <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp"
-            >Registered Clients</v-toolbar-title
+          <v-toolbar-title>Registered Clients</v-toolbar-title
           >
           <v-divider
-            v-if="$vuetify.breakpoint.smAndUp"
             class="mx-4"
             inset
             vertical

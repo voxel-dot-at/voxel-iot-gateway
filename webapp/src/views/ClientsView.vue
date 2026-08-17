@@ -26,11 +26,11 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="white" density="compact">
-          <v-toolbar-title v-if="$vuetify.display.smAndUp"
+          <v-toolbar-title v-if="$display.sm"
             >Registered Clients</v-toolbar-title
           >
           <v-divider
-            v-if="$vuetify.display.smAndUp"
+            v-if="$display.sm"
             class="mx-4"
             inset
             vertical

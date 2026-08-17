@@ -22,14 +22,14 @@
   >
     <template v-slot:top>
       <v-toolbar flat density="compact" color="white">
-        <v-toolbar-title v-if="$vuetify.display.smAndUp"
+        <v-toolbar-title v-if="$display.sm"
           >Security Information</v-toolbar-title
         >
         <v-divider
           class="mx-4"
           inset
           vertical
-          v-if="$vuetify.display.smAndUp"
+          v-if="$display.sm"
         ></v-divider>
         <v-text-field
           v-model="search"
@@ -47,8 +47,8 @@
           class="mb-2"
           @click.stop="openNewSec()"
         >
-          {{ $vuetify.display.smAndDown ? "" : "Add Security Information" }}
-          <v-icon :end="!$vuetify.display.smAndDown">
+          {{ !$display.sm ? "" : "Add Security Information" }}
+          <v-icon :end="$display.sm">
             {{ $icons.mdiKeyPlus }}
           </v-icon>
         </v-btn>
@@ -126,8 +126,8 @@
   </v-data-table>
 </template>
 <script>
-import SecurityInfoDialog from "@leshan-demo-servers-shared/components/security/SecurityInfoDialog.vue";
-import SecurityInfoChip from "@leshan-demo-servers-shared/components/security/SecurityInfoChip.vue";
+import SecurityInfoDialog from "@/components/security/SecurityInfoDialog.vue";
+import SecurityInfoChip from "@/components/security/SecurityInfoChip.vue";
 
 export default {
   components: { SecurityInfoDialog, SecurityInfoChip },
