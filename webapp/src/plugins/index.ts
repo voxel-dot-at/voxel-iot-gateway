@@ -11,7 +11,6 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
  *******************************************************************************/
 
-
 // Plugins
 import axiosPlugin from "@/plugins/axios";
 import iconsPlugin from "@/plugins/icons";
@@ -22,16 +21,17 @@ import dialog from "@/plugins/dialog";
 import dialogPrompt from "@/plugins/dialog-prompt";
 import ssePlugin from "@/plugins/sse";
 import router from "@/router";
+import type { App } from "vue";
 
-export function registerPlugins(app) {
-    app
-        .use(iconsPlugin)
-        .use(storePlugin)
-        .use(preferencePlugin)
-        .use(vuetify)
-        .use(dialog)
-        .use(dialogPrompt) // Must be after dialog to extend it
-        .use(ssePlugin)
-        .use(axiosPlugin)
-        .use(router)
+export function registerPlugins(app: App): void {
+  app
+    .use(iconsPlugin)
+    .use(storePlugin)
+    .use(preferencePlugin)
+    .use(vuetify)
+    .use(dialog)
+    .use(dialogPrompt) // Must be after dialog to extend it
+    .use(ssePlugin)
+    .use(axiosPlugin)
+    .use(router);
 }

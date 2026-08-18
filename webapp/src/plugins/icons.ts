@@ -8,7 +8,7 @@
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v20.html
  * and the Eclipse Distribution License is available at
- *    http://www.eclipse.org/org/documents/edl-v10.html.
+ *    http://www.eclipse.org/documents/edl-v10.html.
  *******************************************************************************/
 
 import {
@@ -44,6 +44,7 @@ import {
   mdiSleep,
   mdiTune,
 } from "@mdi/js";
+import type { App } from "vue";
 
 /**
  * We create a Icons plugin to load plugin using @mdi/js.
@@ -54,7 +55,7 @@ import {
  */
 
 // create plugin which make data accessible on all vues
-const _icons = {
+const _icons: Record<string, string> = {
   mdiAccessPointNetwork,
   mdiAlertCircle,
   mdiCheckboxBlankOutline,
@@ -88,9 +89,10 @@ const _icons = {
   mdiTune,
 };
 
-let IconsPlugin = {};
-IconsPlugin.install = function (app) {
-  app.config.globalProperties.$icons = _icons;
+const IconsPlugin = {
+  install(app: App): void {
+    app.config.globalProperties.$icons = _icons;
+  },
 };
 
 export default IconsPlugin;

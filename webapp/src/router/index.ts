@@ -11,18 +11,17 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
  *******************************************************************************/
 
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import Clients from "../views/Clients.vue";
 import Client from "../views/Client.vue";
 import CompositeOperationView from "../views/CompositeOperationView.vue";
 import CompositeObjectView from "../views/CompositeObjectView.vue";
 import ObjectView from "../views/ObjectView.vue";
-
 import Security from "../views/Security.vue";
 import Server from "../views/Server.vue";
 import About from "../views/About.vue";
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: "/",
     redirect: "/clients",
@@ -74,7 +73,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/'),
+  history: createWebHistory("/"),
   routes,
 });
 

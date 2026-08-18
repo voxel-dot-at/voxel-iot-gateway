@@ -12,10 +12,10 @@
  *******************************************************************************/
 
 /**
- * @param {*} value the value to check
- * @returns true if the value is a integer
+ * @param {unknown} value the value to check
+ * @returns {boolean} true if the value is a integer
  */
-function isInteger(value) {
+export function isInteger(value: unknown): boolean {
   if (typeof value === "number") {
     return value === Math.round(value);
   } else if (typeof value === "string" && value.trim() !== "") {
@@ -25,10 +25,10 @@ function isInteger(value) {
 }
 
 /**
- * @param {*} value the value to check
- * @returns true if the value is a number
+ * @param {unknown} value the value to check
+ * @returns {boolean} true if the value is a number
  */
-function isNumber(value) {
+export function isNumber(value: unknown): boolean {
   if (typeof value === "number") {
     return true;
   } else if (typeof value === "string" && value.trim() !== "") {
@@ -36,5 +36,3 @@ function isNumber(value) {
   }
   return false;
 }
-
-export { isInteger, isNumber };

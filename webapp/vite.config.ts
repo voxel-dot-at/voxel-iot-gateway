@@ -5,8 +5,9 @@ import Components from "unplugin-vue-components/vite";
 import browserslistToEsbuild from "browserslist-to-esbuild";
 
 import path from "path";
+import { fileURLToPath } from "url";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,11 +30,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          if (id.includes('vuetify')) {
-            return 'vuetify';
+          if (id.includes("vuetify")) {
+            return "vuetify";
           }
-          if (id.includes('node_modules')) {
-            return 'vendor';
+          if (id.includes("node_modules")) {
+            return "vendor";
           }
         },
       },
@@ -65,8 +66,8 @@ export default defineConfig({
       "vuetify/components": path.resolve(__dirname, "./node_modules/vuetify/lib/components/index.js"),
       "@mdi/js": path.resolve(__dirname, "./node_modules/@mdi/js/mdi.js"),
     },
-    extensions: [".js", ".vue"],
+    extensions: [".ts", ".js", ".vue"],
     dedupe: ["vue"],
   },
-    base: "/"
+  base: "/",
 });
