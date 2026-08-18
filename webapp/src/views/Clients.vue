@@ -68,6 +68,7 @@ export default {
   data: () => ({
     loading: true,
     registrations: [],
+    dayjs: dayjs,
     headers: [
       { text: "Client Endpoint", value: "endpoint" },
       { text: "Registration ID", value: "registrationId" },

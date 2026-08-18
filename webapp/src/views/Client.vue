@@ -109,6 +109,7 @@ export default {
     deregister: false,
     registration: null,
     objectdefs: [],
+    dayjs: dayjs,
   }),
   methods: {
     updateModels: function () {
