@@ -21,8 +21,7 @@
       class="elevation-0 fill-height ma-3"
       @click:row="openLink"
       :search="search"
-      sort-by="registrationDate"
-      sort-desc
+      :sort-by="[{ key: 'registrationDate', order: 'asc' }]"
     >
       <template v-slot:top>
         <v-toolbar>
@@ -46,10 +45,10 @@
       </template>
       <!-- custom display for date column -->
       <template v-slot:item.registrationDate="{ item }">
-        {{ new Date(item.registrationDate) | moment("MMM D, h:mm:ss A") }}
+        {{ dayjs(item.registrationDate).format("MMM D, h:mm:ss A") }}
       </template>
       <template v-slot:item.lastUpdate="{ item }">
-        {{ new Date(item.lastUpdate) | moment("MMM D, h:mm:ss A") }}
+        {{ dayjs(item.lastUpdate).format("MMM D, h:mm:ss A") }}
       </template>
       <template v-slot:item.infos="{ item }">
         <client-info :registration="item" tooltipleft />
@@ -60,6 +59,7 @@
 
 <script>
 import ClientInfo from "../components/ClientInfo.vue";
+import dayjs from "dayjs";
 
 export default {
   components: { ClientInfo },
@@ -125,7 +125,7 @@ export default {
         )
       );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // close eventsource on destroy
     this.sse.disconnect();
   },

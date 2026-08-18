@@ -40,11 +40,11 @@
           <div>Reg. ID: {{ registration.registrationId }}</div>
           <div>
             Registered:
-            {{ registration.registrationDate | moment("MMM D, h:mm:ss A") }}
+            {{ dayjs(registration.registrationDate).format("MMM D, h:mm:ss A") }}
           </div>
           <div>
             Updated:
-            {{ registration.lastUpdate | moment("MMM D, h:mm:ss A") }}
+            {{ dayjs(registration.lastUpdate).format("MMM D, h:mm:ss A") }}
           </div>
         </div>
         <v-divider />
@@ -98,6 +98,7 @@
 import ClientInfo from "../components/ClientInfo.vue";
 import ClientSetting from "../components/ClientSetting.vue";
 import ObjectSelector from "../components/object/ObjectSelector.vue";
+import dayjs from "dayjs";
 
 
 // get models for this endpoint
@@ -241,7 +242,7 @@ export default {
         this.deregister = true;
       });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.sse.disconnect();
   },
 };

@@ -15,7 +15,7 @@
     :headers="headers"
     :items="securityInfos"
     item-key="endpoint"
-    sort-by="endpoint"
+    :sort-by="[{ key: 'endpoint', order: 'asc' }]"
     class="elevation-0"
     :search="search"
   >
@@ -156,7 +156,7 @@ export default {
           (s) => s.endpoint == cred.endpoint
         );
         if (index != -1) {
-          this.$set(this.securityInfos, index, cred);
+          this.securityInfos[index] = cred;
         } else {
           this.securityInfos.push(cred);
         }
