@@ -128,10 +128,10 @@ export default {
   data: () => ({
     dialogOpened: false,
     headers: [
-      { text: "Endpoint", value: "endpoint" },
-      { text: "Security mode", value: "mode" },
-      { text: "Details", value: "details", sortable: false, width: "60%" },
-      { text: "Actions", value: "actions", sortable: false },
+      { title: "Endpoint", key: "endpoint" },
+      { title: "Security mode", key: "mode" },
+      { title: "Details", key: "details", sortable: false, width: "60%" },
+      { title: "Actions", key: "actions", sortable: false },
     ],
     search: "",
     securityInfos: [],
