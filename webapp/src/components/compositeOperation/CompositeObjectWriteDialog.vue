@@ -117,7 +117,7 @@ export default {
     },
     write() {
       this.show = false;
-      console.log(this.nodesValue);
+      //console.log(this.nodesValue);
       this.$emit("write", this.nodesValue);
     },
   },

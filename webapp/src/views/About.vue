@@ -10,6 +10,18 @@
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
+<script>
+import leshanLogo from '@/assets/image/multicolor-leshan.png';
+
+export default {
+  data() {
+    return {
+      version: import.meta.env.VITE_APP_VERSION,
+      commitid: import.meta.env.VITE_APP_COMMIT_ID,
+    };
+  },
+};
+</script>
 <template>
   <div class="about">
     <v-row class="text-center pa-5">
@@ -55,15 +67,3 @@
   </div>
 </template>
 
-<script>
-import leshanLogo from '@/assets/image/multicolor-leshan.png';
-
-export default {
-  data() {
-    return {
-      version: import.meta.env.VITE_APP_VERSION,
-      commitid: import.meta.env.VITE_APP_COMMIT_ID,
-    };
-  },
-};
-</script>

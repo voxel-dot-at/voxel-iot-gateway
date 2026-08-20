@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import browserslistToEsbuild from "browserslist-to-esbuild";
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,6 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     vue(),
+    vueDevTools(),
     Components({
       resolvers: [
         // Vuetify
@@ -42,6 +44,14 @@ export default defineConfig({
   },
   preview: {
     port: 8087,
+    proxy: {
+      "/api": {
+        // 8080 is the default port for leshan-server-demo if you change it in development phase you need to change this value too.
+        target: "http://localhost:8088",
+        ws: true,
+        changeOrigin: true,
+      },
+    },
   },
   server: {
     port: 8088,
@@ -53,16 +63,10 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-    // // Workarround : https://stackoverflow.com/questions/71783075/sse-doent-work-with-vue-cli-devserver-proxy
-    // compress: false,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@leshan-demo-servers-shared": path.join(
-        __dirname,
-        "../../leshan/leshan-demo-servers-shared/webapp/src"
-      ),
       "vuetify/components": path.resolve(__dirname, "./node_modules/vuetify/lib/components/index.js"),
       "@mdi/js": path.resolve(__dirname, "./node_modules/@mdi/js/mdi.js"),
     },

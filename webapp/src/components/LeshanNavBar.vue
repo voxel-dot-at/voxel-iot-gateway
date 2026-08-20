@@ -10,25 +10,18 @@
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
+<script setup>
+import logo from '../assets/image/logo.png';
+</script>
 <template>
-  <v-app-bar color="grey darken-4" max-height="48">
-<!--
-    <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp">
-      <v-img :src="logo" max-height="32" contain></v-img>
-    </v-toolbar-title>
--->
+  <v-app-bar style="darken-3" flat density="compact"  max-height="48">
+
     <v-toolbar-title>
-      <v-img :src="logo" max-height="32" contain></v-img>
+    <!-- <v-img :src="logo" max-height="32" contain></v-img> -->
     </v-toolbar-title>
+
     <!-- See more details about why we hide-slider and replace it by custom css (active-class="active") :
          https://github.com/eclipse/leshan/issues/1134 -->
-<!--
-    <v-tabs
-      :right="$vuetify.breakpoint.smAndUp"
-      :grow="!$vuetify.breakpoint.smAndUp"
-      hide-slider
-    >
--->
     <v-tabs :right hide-slider >
       <v-tab
         v-for="page in pages"
@@ -44,15 +37,16 @@
         </span></v-tab
       >
 -->
-      <v-icon>{{ page.icon }}</v-icon
-        ><span class="pl-2">{{ page.title }}</span>
+      <v-icon>{{ page.icon }}</v-icon>
+        <span class="pl-2">{{ page.title }}</span>
       </v-tab>
     </v-tabs>
   </v-app-bar>
 </template>
 
 <script>
-import logo from '../assets/image/logo.png';
+// import logo from '../assets/image/logo.png';
+// import logo from '../assets/image/multicolor-leshan.png';//logo.png'; // ASSETS
 
 export default {
   data: function () {

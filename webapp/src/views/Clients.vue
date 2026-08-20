@@ -23,6 +23,20 @@
       :search="search"
       :sort-by="[{ key: 'registrationDate', order: 'asc' }]"
     >
+    <template #header.endpoint>
+        <strong>Client Endpoint</strong>
+    </template>
+    <template #header.registrationId>
+        <strong>Registration ID</strong>
+    </template>
+    <template #header.registrationDate>
+        <strong>Registration Date</strong>
+    </template>
+    <template #header.lastUpdate>
+        <strong>Last Update</strong>
+    </template>
+
+
       <template v-slot:top>
         <v-toolbar>
           <v-toolbar-title>Registered Clients</v-toolbar-title
@@ -80,7 +94,7 @@ export default {
   }),
   methods: {
     openLink(reg) {
-      this.$router.push(`/clients/${reg.endpoint}/3`);
+      this.$router.push(`/clients/${reg.registrationId}/3`);
     },
   },
   mounted() {
@@ -97,13 +111,13 @@ export default {
         if (!msg || !msg.registration) return;
         let reg = msg.registration;
         this.registrations = this.registrations
-          .filter((r) => reg.registrationId !== r.registrationId)
+          .filter((r) => (reg?.registrationId ?? '') !== r.registrationId)
           .concat(reg);
       })
       .on("DEREGISTRATION", (reg) => {
         if (!reg) return;
         this.registrations = this.registrations.filter(
-          (r) => reg.registrationId !== r.registrationId
+          (r) => (reg?.registrationId ?? '') !== r.registrationId
         );
       })
       .on("SLEEPING", (reg) => {

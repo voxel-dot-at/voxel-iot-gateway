@@ -21,14 +21,13 @@
   >
     <template v-slot:top>
       <v-toolbar>
-        <v-toolbar-title v-if="$display.sm"
-          >Security Information</v-toolbar-title
+        <v-toolbar-title v-if="true">Security Information</v-toolbar-title
         >
         <v-divider
           class="mx-4"
           inset
           vertical
-          v-if="$display.sm"
+          v-if="true"
         ></v-divider>
         <v-text-field
           v-model="search"
@@ -41,8 +40,8 @@
         ></v-text-field>
         <!-- add security info button-->
         <v-btn color="dark" class="mb-2" @click.stop="openNewSec()">
-          {{ !$display.sm ? "" : "Add Security Information" }}
-          <v-icon :right="$display.sm" color="dark">
+          {{ !true ? "" : "Add Security Information" }}
+          <v-icon  color="dark">
             {{ $icons.mdiKeyPlus }}
           </v-icon>
         </v-btn>

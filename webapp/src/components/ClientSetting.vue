@@ -16,7 +16,7 @@
       <v-select
         single-line
         hide-details
-        :prefix="$display.md && !$display.lg ? null : 'Timeout :'"
+        :prefix="'Timeout :'"
         :items="timeoutList"
         item-value="val"
         item-text="txt"
@@ -28,7 +28,7 @@
     <div title="Content Format used to send request handling single value">
       <v-select
         single-line
-        :prefix="$display.md && !$display.lg ? null : 'Single Value :'"
+        :prefix="'Single Value :'"
         hide-details
         :items="singleFormatList"
         v-model="singleformat"
@@ -38,7 +38,7 @@
       <v-select
         single-line
         hide-details
-        :prefix="$display.md && !$display.lg ? null : 'Multi Value :'"
+        :prefix="'Multi Value :'"
         :items="multiFormatList"
         v-model="multiformat"
       ></v-select>
