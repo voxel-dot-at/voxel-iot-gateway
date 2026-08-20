@@ -88,22 +88,26 @@ export default {
     this.sse = this.$sse
       .create({ url: "/api/event" })
       .on("REGISTRATION", (reg) => {
+        if (!reg) return;
         this.registrations = this.registrations
           .filter((r) => reg.endpoint !== r.endpoint)
           .concat(reg);
       })
       .on("UPDATED", (msg) => {
+        if (!msg || !msg.registration) return;
         let reg = msg.registration;
         this.registrations = this.registrations
           .filter((r) => reg.registrationId !== r.registrationId)
           .concat(reg);
       })
       .on("DEREGISTRATION", (reg) => {
+        if (!reg) return;
         this.registrations = this.registrations.filter(
           (r) => reg.registrationId !== r.registrationId
         );
       })
       .on("SLEEPING", (reg) => {
+        if (!reg) return;
         for (var i = 0; i < this.registrations.length; i++) {
           if (this.registrations[i].endpoint === reg.ep) {
             this.registrations[i].sleeping = true;

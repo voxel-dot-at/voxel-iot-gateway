@@ -155,16 +155,18 @@ export default {
         url: "/api/event?ep=" + encodeURIComponent(this.$route.params.endpoint),
       })
       .on("REGISTRATION", (reg) => {
+        if (!reg) return;
         this.registration = reg;
         this.deregister = false;
         this.updateModels();
       })
       .on("UPDATED", (msg) => {
+        if (!msg || !msg.registration) return;
         let previousReg = this.registration;
         this.registration = msg.registration;
         if (
           JSON.stringify(this.registration.objectLinks) !==
-          JSON.stringify(previousReg.objectLinks)
+          JSON.stringify(previousReg?.objectLinks)
         ) {
           this.updateModels();
         }
@@ -175,14 +177,16 @@ export default {
         this.deregister = true;
       })
       .on("SLEEPING", () => {
-        this.registration.sleeping = true;
+        if (this.registration) this.registration.sleeping = true;
       })
       .on("SEND", (msg) => {
+        if (!msg || !msg.val) return;
         for (let path in msg.val) {
           this.$store.newNode(this.$route.params.endpoint, path, msg.val[path]);
         }
       })
       .on("NOTIFICATION", (msg) => {
+        if (!msg) return;
         if (msg.kind == "composite") {
           this.$store.newNodes(this.$route.params.endpoint, msg.val);
           this.$store.setCompositePathsObserved(

@@ -45,7 +45,8 @@ const _axios: AxiosInstance = axios.create(config);
 
 _axios.interceptors.request.use(
   function (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
-    // Do something before request is sent
+    // Log HTTP request
+    console.log(`[HTTP] ${config.method?.toUpperCase()} ${config.url}`, config.params || {}, config.data || {});
     return config;
   },
   function (error: AxiosError): Promise<AxiosError> {
@@ -57,6 +58,8 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
   function (response: AxiosResponse): AxiosResponse {
+    // Log HTTP response
+    console.log(`[HTTP] ${response.config.method?.toUpperCase()} ${response.config.url} -> ${response.status}`, response.data);
     // show error message if device return a failure code
     if (response.data && (response.data as { failure?: boolean }).failure) {
       let msg = `Device response : ${(response.data as { status?: string }).status}`;

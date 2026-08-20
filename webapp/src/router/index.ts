@@ -11,7 +11,7 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
  *******************************************************************************/
 
-import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
 import Clients from "../views/Clients.vue";
 import Client from "../views/Client.vue";
 import CompositeOperationView from "../views/CompositeOperationView.vue";
@@ -73,7 +73,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/"),
+  history: createWebHashHistory(),
   routes,
 });
 

@@ -11,7 +11,7 @@
  *    http://www.eclipse.org/org/documents/edl-v10.html.
   ----------------------------------------------------------------------------->
 <template>
-  <v-app-bar color="dark" max-height="48">
+  <v-app-bar color="grey darken-4" max-height="48">
 <!--
     <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp">
       <v-img :src="logo" max-height="32" contain></v-img>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import logo from '@/assets/image/logo.png';
+import logo from '../assets/image/logo.png';
 
 export default {
   data: function () {
