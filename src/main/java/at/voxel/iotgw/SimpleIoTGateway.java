@@ -12,13 +12,16 @@ import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.util.CertPathUtil;
 import org.eclipse.californium.scandium.config.DtlsConfig;
 import org.eclipse.californium.scandium.config.DtlsConfig.DtlsRole;
+
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
+
 import org.eclipse.leshan.core.endpoint.DefaultEndPointUriHandler;
 import org.eclipse.leshan.core.endpoint.EndPointUriHandler;
 import org.eclipse.leshan.core.endpoint.Protocol;
+import org.eclipse.leshan.core.model.LwM2mModel;
 import org.eclipse.leshan.core.model.ObjectLoader;
 import org.eclipse.leshan.core.model.ObjectModel;
 import org.eclipse.leshan.demo.LwM2mDemoConstant;
@@ -28,6 +31,7 @@ import org.eclipse.leshan.demo.servers.json.servlet.ServerServlet;
 import org.eclipse.leshan.server.LeshanServer;
 import org.eclipse.leshan.server.LeshanServerBuilder;
 import org.eclipse.leshan.server.model.LwM2mModelProvider;
+import org.eclipse.leshan.server.model.StaticModelProvider;
 import org.eclipse.leshan.server.model.VersionedModelProvider;
 import org.eclipse.leshan.server.redis.RedisRegistrationStore;
 import org.eclipse.leshan.server.redis.RedisSecurityStore;
@@ -110,14 +114,16 @@ public class SimpleIoTGateway {
             // 3. Handle device registration
             // 4. Process IoT data
 
-            Server webServer = null;
+            at.voxel.iotgw.Server webServer = null;
             if (cli.main.enableWebServer) {
                 System.out.println("Starting webServer");
-                webServer = createJettyServer(cli, lwm2mServer);
+                webServer = new at.voxel.iotgw.WebServer(cli, lwm2mServer);
             }
 
             lwm2mServer.start();
-            webServer.start();
+            if (webServer != null) {
+                webServer.start();
+            }
             System.out.println("Gateway initialized successfully");
 
             // Simulate gateway running
@@ -165,8 +171,10 @@ public class SimpleIoTGateway {
         if (cli.main.modelsFolder != null) {
             models.addAll(ObjectLoader.loadObjectsFromDir(cli.main.modelsFolder, true));
         }
+        models.addAll(ObjectLoader.loadObjectsFromDir(new File("src/main/resources/models")));
         LwM2mModelProvider modelProvider = new VersionedModelProvider(models);
         builder.setObjectModelProvider(modelProvider);
+
 
         // Set securityStore & registrationStore
         EditableSecurityStore securityStore;
