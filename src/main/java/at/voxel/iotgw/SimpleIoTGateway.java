@@ -1,18 +1,9 @@
 package at.voxel.iotgw;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.jetty.ee10.servlet.DefaultServlet;
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
-import org.eclipse.jetty.server.Server;
-
 import org.eclipse.leshan.demo.cli.ShortErrorMessageHandler;
-import org.eclipse.leshan.demo.servers.json.servlet.SecurityServlet;
-import org.eclipse.leshan.demo.servers.json.servlet.ServerServlet;
 import org.eclipse.leshan.server.LeshanServer;
-import org.eclipse.leshan.servers.security.EditableSecurityStore;
 
 import at.voxel.iotgw.lwm2m.Lwm2mServer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -27,9 +18,6 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import at.voxel.iotgw.cli.IoTGatewayCli;
-import at.voxel.iotgw.servlet.ClientServlet;
-import at.voxel.iotgw.servlet.EventServlet;
-import at.voxel.iotgw.servlet.ObjectSpecServlet;
 
 /**
  * Simple IoT Gateway implementation that demonstrates the basic structure
@@ -75,16 +63,11 @@ public class SimpleIoTGateway {
             // Setup MQTT client
             MqttClient mqttClient = setupMqttClient();
 
-            // In a real implementation, this would:
-            // 1. Initialize MQTT connection
-            // 2. Set up CoAP server
-            // 3. Handle device registration
-            // 4. Process IoT data
-
+            // Setup Web server
             at.voxel.iotgw.Server webServer = null;
             if (cli.main.enableWebServer) {
                 System.out.println("Starting webServer");
-                webServer = new at.voxel.iotgw.WebServer(cli, lwm2mServer);
+                webServer = new WebServer(cli, lwm2mServer);
             }
 
             lwm2mServer.start();
@@ -126,64 +109,6 @@ public class SimpleIoTGateway {
             e.printStackTrace();
         }
         System.out.println("Gateway shutting down...");
-    }
-
-    private static Server createJettyServer(IoTGatewayCli cli, LeshanServer lwServer) {
-        // Now prepare Jetty
-        InetSocketAddress jettyAddr;
-        if (cli.main.webhost == null) {
-            jettyAddr = new InetSocketAddress(cli.main.webPort);
-        } else {
-            jettyAddr = new InetSocketAddress(cli.main.webhost, cli.main.webPort);
-        }
-        System.out.printf("Web Listening on port %d%n", cli.main.webPort);
-
-        Server server = new Server(jettyAddr);
-        ServletContextHandler root = new ServletContextHandler("/", true, false);
-        server.setHandler(root);
-
-        // Create static Servlet
-        DefaultServlet staticServelt = new DefaultServlet();
-        ServletHolder staticHolder = new ServletHolder(staticServelt);
-        staticHolder.setInitParameter("baseResource",
-                SimpleIoTGateway.class.getClassLoader().getResource("webapp").toExternalForm());
-        staticHolder.setInitParameter("gzip", "true");
-        staticHolder.setInitParameter("cacheControl", "public, max-age=31536000");
-        root.addServlet(staticHolder, "/");
-
-        // Create REST API Servlets
-        EventServlet eventServlet = new EventServlet(lwServer);
-        ServletHolder eventServletHolder = new ServletHolder(eventServlet);
-        root.addServlet(eventServletHolder, "/api/event/*");
-
-        ServletHolder clientServletHolder = new ServletHolder(new ClientServlet(lwServer, eventServlet));
-        root.addServlet(clientServletHolder, "/api/clients/*");
-
-        ServletHolder securityServletHolder;
-        if (cli.identity.isRPK()) {
-            securityServletHolder = new ServletHolder(new SecurityServlet(
-                    (EditableSecurityStore) lwServer.getSecurityStore(), cli.identity.getPublicKey()));
-        } else {
-            securityServletHolder = new ServletHolder(new SecurityServlet(
-                    (EditableSecurityStore) lwServer.getSecurityStore(), cli.identity.getCertChain()[0]));
-        }
-        root.addServlet(securityServletHolder, "/api/security/*");
-
-        ServletHolder serverServletHolder;
-        if (cli.identity.isRPK()) {
-            serverServletHolder = new ServletHolder(
-                    new ServerServlet(lwServer.getEndpoints(), cli.identity.getPublicKey()));
-        } else {
-            serverServletHolder = new ServletHolder(
-                    new ServerServlet(lwServer.getEndpoints(), cli.identity.getCertChain()[0]));
-        }
-        root.addServlet(serverServletHolder, "/api/server/*");
-
-        ServletHolder objectSpecServletHolder = new ServletHolder(
-                new ObjectSpecServlet(lwServer.getModelProvider(), lwServer.getRegistrationService()));
-        root.addServlet(objectSpecServletHolder, "/api/objectspecs/*");
-
-        return server;
     }
 
     /**
