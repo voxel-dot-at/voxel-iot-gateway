@@ -14,10 +14,10 @@
 import logo from '../assets/image/logo.png';
 </script>
 <template>
-  <v-app-bar style="darken-3" flat density="compact"  max-height="48">
+  <v-app-bar style="dark" flat density="compact"  max-height="48">
 
     <v-toolbar-title>
-    <!-- <v-img :src="logo" max-height="32" contain></v-img> -->
+    <v-img :src="logo" max-height="32" contain></v-img>
     </v-toolbar-title>
 
     <!-- See more details about why we hide-slider and replace it by custom css (active-class="active") :
@@ -30,13 +30,6 @@ import logo from '../assets/image/logo.png';
         :to="page.route"
         active-class="active"
       >
-<!--
-      <v-icon>{{ page.icon }}</v-icon
-        ><span class="pl-2" v-if="$vuetify.breakpoint.smAndUp">
-          {{ page.title }}
-        </span></v-tab
-      >
--->
       <v-icon>{{ page.icon }}</v-icon>
         <span class="pl-2">{{ page.title }}</span>
       </v-tab>
@@ -45,8 +38,6 @@ import logo from '../assets/image/logo.png';
 </template>
 
 <script>
-// import logo from '../assets/image/logo.png';
-// import logo from '../assets/image/multicolor-leshan.png';//logo.png'; // ASSETS
 
 export default {
   data: function () {
@@ -82,6 +73,11 @@ export default {
   to {
     border-bottom: 2px solid white;
   }
+}
+
+.v-app-bar {
+  background: #333;
+  color: #fff;
 }
 
 .active {

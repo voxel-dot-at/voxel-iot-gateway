@@ -48,6 +48,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SecurityInfoChip: typeof import('./src/components/security/SecurityInfoChip.vue')['default']
     SecurityInfoDialog: typeof import('./src/components/security/SecurityInfoDialog.vue')['default']
+    SecurityInfoInput: typeof import('./src/components/security/SecurityInfoInput.vue')['default']
     SimpleResourceInstanceView: typeof import('./src/components/resources/view/SimpleResourceInstanceView.vue')['default']
     SimpleResourceView: typeof import('./src/components/resources/view/SimpleResourceView.vue')['default']
     SingleValueInput: typeof import('./src/components/values/input/SingleValueInput.vue')['default']

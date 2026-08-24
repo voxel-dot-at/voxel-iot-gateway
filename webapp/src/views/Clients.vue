@@ -94,6 +94,7 @@ export default {
   }),
   methods: {
     openLink(reg) {
+      console.log('LINK', reg)
       this.$router.push(`/clients/${reg.registrationId}/3`);
     },
   },
@@ -140,7 +141,7 @@ export default {
       .get("/api/clients")
       .then(
         (response) => (
-          (this.loading = false), (this.registrations = response.data)
+          (this.loading = false), (this.registrations = response.data), ( console.log('R', response.data) )
         )
       );
   },
