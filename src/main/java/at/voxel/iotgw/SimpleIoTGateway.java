@@ -6,12 +6,7 @@ import org.eclipse.leshan.demo.cli.ShortErrorMessageHandler;
 import org.eclipse.leshan.server.LeshanServer;
 
 import at.voxel.iotgw.lwm2m.Lwm2mServer;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import at.voxel.iotgw.mqtt.MqttServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +56,7 @@ public class SimpleIoTGateway {
             lwm2mServer = Lwm2mServer.createServer(cli);
 
             // Setup MQTT client
-            MqttClient mqttClient = setupMqttClient();
+            MqttServer mqttServer = MqttServer.createServer();
 
             // Setup Web server
             at.voxel.iotgw.Server webServer = null;
@@ -79,7 +74,7 @@ public class SimpleIoTGateway {
             // Simulate gateway running
             try {
                 while (true) {
-                    System.out.println("Gateway running... Press Ctrl+C to stop. mqtt: " + mqttClient.isConnected() + " web: " + webServer.isRunning() );
+                    System.out.println("Gateway running... Press Ctrl+C to stop. mqtt: " + mqttServer.isConnected() + " web: " + webServer.isRunning() );
                     
                     TimeUnit.MINUTES.sleep(1);
                 }
@@ -95,15 +90,7 @@ public class SimpleIoTGateway {
             stopLwm2mServer(lwm2mServer);
 
             // Disconnect MQTT client
-            if (mqttClient != null) {
-                try {
-                    mqttClient.disconnect();
-                    mqttClient.close();
-                    System.out.println("MQTT client disconnected and closed");
-                } catch (MqttException e) {
-                    System.err.println("Error disconnecting MQTT client: " + e.getMessage());
-                }
-            }
+            mqttServer.disconnect();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -121,65 +108,6 @@ public class SimpleIoTGateway {
             System.out.println("Stopping LWM2M server...");
             server.stop();
             System.out.println("LWM2M server stopped");
-        }
-    }
-
-    /**
-     * Sets up and returns an MQTT client
-     * 
-     * @return The configured MQTT client instance
-     */
-    private static MqttClient setupMqttClient() {
-        System.out.println("Setting up MQTT client...");
-        try {
-            // Create MQTT client with a unique client ID
-            String brokerUrl = "tcp://localhost:1883"; // Default MQTT broker
-            String clientId = "voxel-iot-gateway-" + System.currentTimeMillis();
-            MqttClient client = new MqttClient(brokerUrl, clientId);
-
-            // Set up connection options
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(true);
-            options.setConnectionTimeout(30);
-            options.setKeepAliveInterval(60);
-
-            // Register MQTT callback
-            client.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable cause) {
-                    System.err.println("MQTT connection lost: " + cause.getMessage());
-                    cause.printStackTrace();
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    System.out.println("Received message on topic '" + topic + "'");
-                    System.out.println("  Payload: " + new String(message.getPayload()));
-                    System.out.println("  QoS: " + message.getQos());
-                    System.out.println("  Retained: " + message.isRetained());
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
-                    System.out.println("Message delivery complete");
-                }
-            });
-
-            // Connect to the broker
-            client.connect(options);
-            System.out.println("MQTT client connected successfully");
-
-            // Subscribe to IoT topics
-            String topic = "iot/#";
-            int qos = 1;
-            client.subscribe(topic, qos);
-            System.out.println("Subscribed to topic: " + topic + " with QoS: " + qos);
-
-            return client;
-        } catch (MqttException e) {
-            System.err.println("Error setting up MQTT client: " + e.getMessage());
-            e.printStackTrace();
-            return null;
         }
     }
 }
