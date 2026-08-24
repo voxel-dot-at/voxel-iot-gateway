@@ -36,7 +36,7 @@ import org.eclipse.leshan.server.model.VersionedModelProvider;
 import org.eclipse.leshan.server.redis.RedisRegistrationStore;
 import org.eclipse.leshan.server.redis.RedisSecurityStore;
 import org.eclipse.leshan.servers.security.EditableSecurityStore;
-import org.eclipse.leshan.servers.security.FileSecurityStore;
+import at.voxel.iotgw.security.SqliteSecurityStore;
 import org.eclipse.leshan.transport.californium.PrincipalMdcConnectionListener;
 import org.eclipse.leshan.transport.californium.server.endpoint.CaliforniumServerEndpointsProvider;
 import org.eclipse.leshan.transport.californium.server.endpoint.coap.CoapOscoreServerEndpointFactory;
@@ -179,8 +179,8 @@ public class SimpleIoTGateway {
         // Set securityStore & registrationStore
         EditableSecurityStore securityStore;
         if (cli.main.redis == null) {
-            // use file persistence
-            securityStore = new FileSecurityStore();
+            // use SQLite persistence
+            securityStore = new SqliteSecurityStore();
         } else {
             // use Redis Store
             securityStore = new RedisSecurityStore(cli.main.redis);
