@@ -6,6 +6,7 @@ import org.eclipse.leshan.demo.cli.ShortErrorMessageHandler;
 import org.eclipse.leshan.server.LeshanServer;
 
 import at.voxel.iotgw.lwm2m.Lwm2mServer;
+import at.voxel.iotgw.mqtt.MqttAdapter;
 import at.voxel.iotgw.mqtt.MqttServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,13 @@ public class SimpleIoTGateway {
         LeshanServer lwm2mServer;
         try {
             lwm2mServer = Lwm2mServer.createServer(cli);
+
+            // Setup MQTT adapter
+            MqttAdapter mqttAdapter = new MqttAdapter("localhost", 1883);
+
+            // Setup IoT Device Adapter and register it
+            IoTDeviceAdapter deviceAdapter = new IoTDeviceAdapter(lwm2mServer, mqttAdapter);
+            lwm2mServer.getRegistrationService().addListener(deviceAdapter);
 
             // Setup MQTT client
             MqttServer mqttServer = MqttServer.createServer();

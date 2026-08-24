@@ -28,6 +28,7 @@ import org.eclipse.leshan.core.response.ObserveResponse;
 import org.eclipse.leshan.core.response.ReadResponse;
 import org.eclipse.leshan.server.LeshanServer;
 import org.eclipse.leshan.server.registration.Registration;
+import org.eclipse.leshan.server.registration.RegistrationListener;
 import org.eclipse.leshan.server.registration.RegistrationUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ import at.voxel.iotgw.mqtt.MqttAdapter;
  *
  * @author simon
  */
-public class IoTDeviceAdapter {
+public class IoTDeviceAdapter implements RegistrationListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(IoTDeviceAdapter.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -84,7 +85,8 @@ public class IoTDeviceAdapter {
      * @param previousReg
      * @param previousObservations
      */
-    public void handleRegistered(Registration registration, Registration previousReg,
+    @Override
+    public void registered(Registration registration, Registration previousReg,
             Collection<Observation> previousObservations) {
         reg.regState = RegState.registered;
         reg.regId = registration.getId();
@@ -188,7 +190,8 @@ public class IoTDeviceAdapter {
         }
     }
 
-    public void handleUnregistered(Registration registration, Collection<Observation> observations, boolean expired,
+    @Override
+    public void unregistered(Registration registration, Collection<Observation> observations, boolean expired,
             Registration newReg) {
         // TODO Auto-generated method stub
         reg.regState = RegState.unregistered;
@@ -202,7 +205,8 @@ public class IoTDeviceAdapter {
         }
     }
 
-    public void handleUpdatedReg(RegistrationUpdate update, Registration updatedReg, Registration previousReg) {
+    @Override
+    public void updated(RegistrationUpdate update, Registration updatedReg, Registration previousReg) {
         reg.regId = updatedReg.getId();
         reg.action = DeviceAction.updated;
         try {
