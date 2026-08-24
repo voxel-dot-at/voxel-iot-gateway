@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LWM2M xmlns:xsi="http://w3.org" xsi:noNamespaceSchemaLocation="http://openmobilealliance.org">
+    <Object ObjectURN="urn:oma:lwm2m:x:10500">
+        <Name>Smart Valve</Name>
+        <Description1>Private vendor-specific smart water valve control.</Description1>
+        <ObjectID>17912</ObjectID>
+        <ObjectVersion>1.0</ObjectVersion>
+        <MultipleInstances>Multiple</MultipleInstances>
+        <Mandatory>Optional</Mandatory>
+        <Resources>
+            <Item ID="26241">
+                <Name>Valve Position</Name>
+                <Operations>RW</Operations>
+                <MultipleInstances>Single</MultipleInstances>
+                <Mandatory>Mandatory</Mandatory>
+                <Type>Float</Type>
+                <RangeEnumeration>0..100</RangeEnumeration>
+                <Units>%</Units>
+                <Description>Current opening percentage of the valve.</Description>
+            </Item>
+            <Item ID="26242">
+                <Name>Is Open</Name>
+                <Operations>R</Operations>
+                <MultipleInstances>Single</MultipleInstances>
+                <Mandatory>Mandatory</Mandatory>
+                <Type>Boolean</Type>
+                <RangeEnumeration></RangeEnumeration>
+                <Units></Units>
+                <Description>True if valve is completely open.</Description>
+            </Item>
+            <Item ID="26244">
+                <Name>Reset Valve</Name>
+                <Operations>E</Operations>
+                <MultipleInstances>Single</MultipleInstances>
+                <Mandatory>Optional</Mandatory>
+                <Type></Type>
+                <RangeEnumeration></RangeEnumeration>
+                <Units></Units>
+                <Description>Execute calibration routine.</Description>
+            </Item>
+        </Resources>
+    </Object>
+</LWM2M>
