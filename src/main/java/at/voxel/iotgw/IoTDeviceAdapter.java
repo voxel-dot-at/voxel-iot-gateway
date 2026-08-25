@@ -94,14 +94,14 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
         LOG.debug("previousObservations: {}", previousObservations != null ? previousObservations.size() : "null");
 
         reg.regState = RegState.registered;
-        reg.regId = registration.getId();
+        reg.regId = registration.getEndpoint();
         reg.action = DeviceAction.registering;
         this.registration = registration;
 
         LOG.info("Device registered: id={}, endpoint={}", registration.getId(), registration.getEndpoint());
 
         try {
-            broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
+            broker.publish(TOPIC + "/reg/" + registration.getEndpoint(), objectMapper.writeValueAsString(reg));
             LOG.debug("Published registration state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
             LOG.warn("register() Failed to publish " + getId(), e);
@@ -227,13 +227,13 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
         LOG.debug("newReg: {}", newReg != null ? newReg.getEndpoint() : "null");
 
         reg.regState = RegState.unregistered;
-        reg.regId = registration.getId();
+        reg.regId = registration.getEndpoint();
         reg.action = DeviceAction.deregistering;
 
         LOG.info("Device unregistered: id={}, endpoint={}, expired={}", registration.getId(), registration.getEndpoint(), expired);
 
         try {
-            broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
+            broker.publish(TOPIC + "/unreg/" + registration.getEndpoint(), objectMapper.writeValueAsString(reg));
             LOG.debug("Published unregistration state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
             LOG.warn("unregistered() Failed to publish " + getId(), e);
