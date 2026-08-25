@@ -45,4 +45,4 @@ bin/
 !**/certificates/*.pem
 *~
 
-voxel-iot-*
+voxel-iot-*webapp/components.d.ts

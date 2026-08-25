@@ -88,6 +88,7 @@ declare module 'vue' {
     VSelect: typeof import('vuetify/components')['VSelect']
     VSheet: typeof import('vuetify/components')['VSheet']
     VSpacer: typeof import('vuetify/components')['VSpacer']
+    VSwitch: typeof import('vuetify/components')['VSwitch']
     VTab: typeof import('vuetify/components')['VTab']
     VTabs: typeof import('vuetify/components')['VTabs']
     VTextarea: typeof import('vuetify/components')['VTextarea']
