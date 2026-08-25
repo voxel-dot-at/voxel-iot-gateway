@@ -93,9 +93,9 @@ export default {
     search: "",
   }),
   methods: {
-    openLink(reg) {
-      console.log('LINK', reg)
-      this.$router.push(`/clients/${reg.registrationId}/3`);
+    openLink(event, { item }){
+      console.log('LINK', item)
+      this.$router.push(`/clients/${item.registrationId}/3`);
     },
   },
   mounted() {
