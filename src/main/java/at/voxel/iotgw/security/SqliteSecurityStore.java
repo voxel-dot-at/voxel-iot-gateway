@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * This implementation stores security information in a local SQLite database file for persistence across server restarts.
  * </p>
+ * <p>
+ * NOTE: DTLS/PSK authentication is not working yet. The store loads all entries on startup and persists them to SQLite.
+ * </p>
  */
 public class SqliteSecurityStore extends InMemorySecurityStore {
 
@@ -50,6 +53,7 @@ public class SqliteSecurityStore extends InMemorySecurityStore {
         this.dbFile = dbFile;
         initializeDatabase();
         loadFromDatabase();
+        LOG.info("SqliteSecurityStore initialized and loaded successfully");
     }
 
     /**

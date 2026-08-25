@@ -56,6 +56,10 @@ public class SimpleIoTGateway {
         try {
             lwm2mServer = Lwm2mServer.createServer(cli);
 
+            // Log security store info
+            LOG.info("Security store type: {}", lwm2mServer.getSecurityStore().getClass().getName());
+            LOG.info("NOTE: DTLS/PSK authentication is not working yet");
+
             // Setup MQTT adapter
             MqttAdapter mqttAdapter = new MqttAdapter("localhost", 1883);
 

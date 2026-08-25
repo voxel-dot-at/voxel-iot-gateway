@@ -72,10 +72,12 @@ public class Lwm2mServer {
         if (cli.main.redis == null) {
             // use SQLite persistence
             securityStore = new SqliteSecurityStore();
+            System.out.println("Using SqliteSecurityStore for security info persistence");
         } else {
             // use Redis Store
             securityStore = new RedisSecurityStore(cli.main.redis);
             builder.setRegistrationStore(new RedisRegistrationStore(cli.main.redis));
+            System.out.println("Using RedisSecurityStore for security info persistence");
         }
         builder.setSecurityStore(securityStore);
 
