@@ -62,6 +62,7 @@ public class SimpleIoTGateway {
             // Setup IoT Device Adapter and register it
             IoTDeviceAdapter deviceAdapter = new IoTDeviceAdapter(lwm2mServer, mqttAdapter);
             lwm2mServer.getRegistrationService().addListener(deviceAdapter);
+            lwm2mServer.getObservationService().addListener(deviceAdapter);
 
             // Setup MQTT client
             MqttServer mqttServer = MqttServer.createServer();
