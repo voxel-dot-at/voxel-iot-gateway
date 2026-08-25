@@ -12,31 +12,31 @@
     "sbom_maven": "echo 'SBOM generation skipped'"
   },
   "dependencies": {
-    "@fontsource/roboto": "^5.0.0",
+    "@fontsource/roboto": "^5.3.0",
     "@vueuse/core": "^14.4.0",
     "axios": "^1.19.0",
-    "dayjs": "^1.11.0",
+    "dayjs": "^1.11.23",
     "digitspark-dialog": "^2.0.8",
     "file-saver": "^2.0.5",
-    "vue": "^3.5.0",
+    "vue": "^3.5.41",
     "vue-preferences": "^3.0.0",
-    "vue-router": "^4.5.0",
+    "vue-router": "^5.2.0",
     "vue-sse": "^2.5.2",
-    "vuetify": "^4.1.9",
+    "vuetify": "^4.1.11",
     "vuetify-dialog": "^2.0.17"
   },
   "devDependencies": {
-    "@mdi/js": "^3.0.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^26.2.0",
-    "@vitejs/plugin-vue": "^6.0.0",
-    "browserslist-to-esbuild": "^1.2.0",
-    "eslint": "^8.0.0",
-    "eslint-plugin-vue": "^9.0.0",
-    "sass": "^1.70.0",
+    "@mdi/js": "^7.4.47",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@types/node": "^26.3.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "browserslist-to-esbuild": "^2.1.1",
+    "eslint": "^10.9.1",
+    "eslint-plugin-vue": "^10.10.0",
+    "sass": "^1.103.1",
     "typescript": "^7.0.2",
-    "unplugin-vue-components": "^0.28.0",
-    "vite": "8.2.1",
+    "unplugin-vue-components": "^32.1.0",
+    "vite": "8.2.2",
     "vite-plugin-vue-devtools": "^8.2.1"
   },
   "eslintConfig": {
@@ -73,5 +73,8 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
 }

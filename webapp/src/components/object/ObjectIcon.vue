@@ -26,10 +26,10 @@ import {
   mdiDatabase,
   mdiDoor,
   mdiFolderMultipleOutline,
+  mdiFormatListChecks,
   mdiGauge,
   mdiGestureTap,
   mdiLightbulbOnOutline,
-  mdiFormatListChecks,
   mdiMapMarker,
   mdiPackageDown,
   mdiPaletteOutline,
@@ -41,12 +41,12 @@ import {
   mdiSignalVariant,
   mdiSim,
   mdiText,
+  mdiTextBox,
   mdiThermometer,
   mdiTimer,
   mdiToggleSwitch,
   mdiWaterPercent,
   mdiWidgets,
-  mdiTextbox,
 } from "@mdi/js";
 
 export default {
@@ -123,7 +123,7 @@ export default {
         case 3351: // powerupLog
           return mdiCardTextOutline;
         case 10259: // System Log
-          return mdiTextbox;
+          return mdiTextBox;
         case 10260: // RDB (Runtime Database)
           return mdiDatabase;
         case 10351: // Door

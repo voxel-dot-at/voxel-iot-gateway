@@ -19,9 +19,7 @@ export default defineConfig({
       resolvers: [
         // Vuetify
         Vuetify3Resolver(),
-      ],
-      // Vue version of project.
-      version: 3,
+      ]
     }),
   ],
   build: {
