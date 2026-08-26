@@ -43,6 +43,7 @@ import {
   mdiShieldKey,
   mdiSleep,
   mdiTune,
+  mdiDevices
 } from "@mdi/js";
 import type { App } from "vue";
 
@@ -87,6 +88,7 @@ const _icons: Record<string, string> = {
   mdiShieldKey,
   mdiSleep,
   mdiTune,
+  mdiDevices
 };
 
 const IconsPlugin = {
