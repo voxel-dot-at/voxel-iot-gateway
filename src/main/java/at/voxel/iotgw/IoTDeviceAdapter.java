@@ -16,6 +16,7 @@
 package at.voxel.iotgw;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,25 +59,42 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
         registering, updated, deregistering, internal
     };
 
-    RegInfo reg;
+    private final Map<String, RegInfo> regInfo = new HashMap<>();
     private final LeshanServer server;
 
     private final MqttAdapter broker;
 
-    private Registration registration;
-
     public IoTDeviceAdapter(LeshanServer server, MqttAdapter broker) {
         this.server = server;
         this.broker = broker;
-        this.reg = new RegInfo();
     }
 
-    public void setId(String id) {
-        reg.id = id;
+    /**
+     * Get or create RegInfo for a device by endpoint
+     */
+    private RegInfo getRegInfo(String endpoint) {
+        return regInfo.computeIfAbsent(endpoint, k -> new RegInfo());
     }
 
-    public String getId() {
-        return reg.id;
+    /**
+     * Get RegInfo for a device by endpoint
+     */
+    public RegInfo getRegInfo(Registration registration) {
+        return regInfo.get(registration.getEndpoint());
+    }
+
+    /**
+     * Get all registered device endpoints
+     */
+    public Set<String> getEndpoints() {
+        return regInfo.keySet();
+    }
+
+    /**
+     * Get the number of registered devices
+     */
+    public int getDeviceCount() {
+        return regInfo.size();
     }
 
     /**
@@ -89,22 +107,23 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
     @Override
     public void registered(Registration registration, Registration previousReg,
             Collection<Observation> previousObservations) {
-        LOG.info("=== registered() called for endpoint: {} ===", registration.getEndpoint());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== registered() called for endpoint: {} ===", endpoint);
         LOG.debug("previousReg: {}", previousReg != null ? previousReg.getEndpoint() : "null");
         LOG.debug("previousObservations: {}", previousObservations != null ? previousObservations.size() : "null");
 
+        RegInfo reg = getRegInfo(endpoint);
         reg.regState = RegState.registered;
-        reg.regId = registration.getId();
+        reg.regId = registration.getEndpoint();
         reg.action = DeviceAction.registering;
-        this.registration = registration;
 
         LOG.info("Device registered: id={}, endpoint={}", registration.getId(), registration.getEndpoint());
 
         try {
-            broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
+            broker.publish(TOPIC + "/reg/" + endpoint, objectMapper.writeValueAsString(reg));
             LOG.debug("Published registration state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
-            LOG.warn("register() Failed to publish " + getId(), e);
+            LOG.warn("register() Failed to publish for endpoint " + endpoint, e);
         }
 
         Map<Integer, Version> m = registration.getSupportedObject();
@@ -136,9 +155,9 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
         String serNo = "serno_1234";
         try {
             LOG.debug("Fetching firmware version...");
-            fw = getFirmwareVersion();
+            fw = getFirmwareVersion(registration);
             LOG.debug("Fetching serial number...");
-            serNo = getSerialNo();
+            serNo = getSerialNo(registration);
         } catch (InterruptedException ex) {
             LOG.warn("Failed to read getFirmwareVersion!", ex);
         }
@@ -165,7 +184,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                 LOG.warn("ObserveResponse failed: {} {}", oresp.getCode(), oresp.getErrorMessage());
             }
         } catch (InterruptedException e) {
-            LOG.warn("register() Failed to get data for " + getId(), e);
+            LOG.warn("register() Failed to get data for endpoint " + endpoint, e);
         }
         LOG.info("=== registered() completed ===");
     }
@@ -177,8 +196,8 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
      * @return
      * @throws InterruptedException
      */
-    public String getSerialNo() throws InterruptedException {
-        LOG.debug("=== getSerialNo() called ===");
+    public String getSerialNo(Registration registration) throws InterruptedException {
+        LOG.debug("=== getSerialNo() called for endpoint: {} ===", registration.getEndpoint());
         LOG.debug("Sending ReadRequest(3, 0, 2)...");
         ReadResponse response = server.send(registration, new ReadRequest(3, 0, 2));
 
@@ -201,8 +220,8 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
      * @return
      * @throws InterruptedException
      */
-    public String getFirmwareVersion() throws InterruptedException {
-        LOG.debug("=== getFirmwareVersion() called ===");
+    public String getFirmwareVersion(Registration registration) throws InterruptedException {
+        LOG.debug("=== getFirmwareVersion() called for endpoint: {} ===", registration.getEndpoint());
         LOG.debug("Sending ReadRequest(3, 0, 3)...");
         ReadResponse response = server.send(registration, new ReadRequest(3, 0, 3));
 
@@ -221,32 +240,36 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
     @Override
     public void unregistered(Registration registration, Collection<Observation> observations, boolean expired,
             Registration newReg) {
-        LOG.info("=== unregistered() called for endpoint: {} ===", registration.getEndpoint());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== unregistered() called for endpoint: {} ===", endpoint);
         LOG.debug("observations: {}", observations != null ? observations.size() : "null");
         LOG.debug("expired: {}", expired);
         LOG.debug("newReg: {}", newReg != null ? newReg.getEndpoint() : "null");
 
+        RegInfo reg = getRegInfo(endpoint);
         reg.regState = RegState.unregistered;
-        reg.regId = registration.getId();
+        reg.regId = registration.getEndpoint();
         reg.action = DeviceAction.deregistering;
 
         LOG.info("Device unregistered: id={}, endpoint={}, expired={}", registration.getId(), registration.getEndpoint(), expired);
 
         try {
-            broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
+            broker.publish(TOPIC + "/unreg/" + endpoint, objectMapper.writeValueAsString(reg));
             LOG.debug("Published unregistration state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
-            LOG.warn("unregistered() Failed to publish " + getId(), e);
+            LOG.warn("unregistered() Failed to publish for endpoint " + endpoint, e);
         }
         LOG.info("=== unregistered() completed ===");
     }
 
     @Override
     public void updated(RegistrationUpdate update, Registration updatedReg, Registration previousReg) {
-        LOG.info("=== updated() called for endpoint: {} ===", updatedReg.getEndpoint());
+        String endpoint = updatedReg.getEndpoint();
+        LOG.info("=== updated() called for endpoint: {} ===", endpoint);
         LOG.debug("update: {}", update);
         LOG.debug("previousReg: {}", previousReg != null ? previousReg.getEndpoint() : "null");
 
+        RegInfo reg = getRegInfo(endpoint);
         reg.regId = updatedReg.getId();
         reg.action = DeviceAction.updated;
 
@@ -256,13 +279,16 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
             LOG.debug("Published update state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
-            LOG.warn("updated() Failed to publish " + getId(), e);
+            LOG.warn("updated() Failed to publish for endpoint " + endpoint, e);
         }
         LOG.info("=== updated() completed ===");
     }
 
     public void onAwake(Registration registration) {
-        LOG.info("=== onAwake() called for endpoint: {} ===", registration.getEndpoint());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== onAwake() called for endpoint: {} ===", endpoint);
+
+        RegInfo reg = getRegInfo(endpoint);
         reg.regId = registration.getId();
         reg.regState = RegState.awake;
         reg.action = DeviceAction.internal;
@@ -273,13 +299,16 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
             LOG.debug("Published awake state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
-            LOG.warn("onAwake() Failed to publish " + getId(), e);
+            LOG.warn("onAwake() Failed to publish for endpoint " + endpoint, e);
         }
         LOG.info("=== onAwake() completed ===");
     }
 
     public void onSleeping(Registration registration) {
-        LOG.info("=== onSleeping() called for endpoint: {} ===", registration.getEndpoint());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== onSleeping() called for endpoint: {} ===", endpoint);
+
+        RegInfo reg = getRegInfo(endpoint);
         reg.regId = registration.getId();
         reg.regState = RegState.asleep;
         reg.action = DeviceAction.internal;
@@ -290,7 +319,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             broker.publish(TOPIC, objectMapper.writeValueAsString(reg));
             LOG.debug("Published sleeping state to MQTT topic: {}", TOPIC);
         } catch (JsonProcessingException e) {
-            LOG.warn("onSleeping() Failed to publish " + getId(), e);
+            LOG.warn("onSleeping() Failed to publish for endpoint " + endpoint, e);
         }
         LOG.info("=== onSleeping() completed ===");
     }

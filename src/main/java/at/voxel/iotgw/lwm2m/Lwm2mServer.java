@@ -63,7 +63,7 @@ public class Lwm2mServer {
         if (cli.main.modelsFolder != null) {
             models.addAll(ObjectLoader.loadObjectsFromDir(cli.main.modelsFolder, true));
         }
-        models.addAll(ObjectLoader.loadObjectsFromDir(new File("src/main/resources/models")));
+        models.addAll(ObjectLoader.loadObjectsFromDir(new File("models.local")));
         LwM2mModelProvider modelProvider = new VersionedModelProvider(models);
         builder.setObjectModelProvider(modelProvider);
 

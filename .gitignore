@@ -46,3 +46,5 @@ bin/
 *~
 
 voxel-iot-*webapp/components.d.ts
+data/security.db
+voxel-iot-gateway-*/
