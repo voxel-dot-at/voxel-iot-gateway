@@ -423,7 +423,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             }
             
             // Publish to MQTT
-            String topic = TOPIC + "/obs/" + endpoint;
+            String topic = TOPIC + "/" + endpoint + "/obs";
             String payload = objectMapper.writeValueAsString(contextData);
             broker.publish(topic, payload);
             LOG.info("Published observation context to MQTT topic: {}", topic);
@@ -485,7 +485,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                     payload.set("value", valueNode);
                     
                     // Publish to MQTT
-                    String topic = TOPIC + "/resp/" + endpoint;
+                    String topic = TOPIC + "/" + endpoint + "/resp";
                     String jsonPayload = objectMapper.writeValueAsString(payload);
                     broker.publish(topic, jsonPayload);
                     LOG.info("Published response value to MQTT topic: {}", topic);
@@ -550,7 +550,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                     payload.set("values", valuesNode);
                     
                     // Publish to MQTT
-                    String topic = TOPIC + "/resp/" + endpoint;
+                    String topic = TOPIC + "/" + endpoint + "/resp";
                     String jsonPayload = objectMapper.writeValueAsString(payload);
                     broker.publish(topic, jsonPayload);
                     LOG.info("Published composite response values to MQTT topic: {}", topic);
