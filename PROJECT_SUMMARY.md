@@ -149,6 +149,156 @@ The `MqttServer` exposes security store operations via MQTT topics:
 
 Responses are published to `iot/sec/response/...` topics with JSON payloads containing success/error status or security info data.
 
+## MQTT Topic Reference
+
+The gateway uses the following MQTT topics for device management and security operations:
+
+### Device Management Topics (m2m/device/)
+
+| Topic Pattern | Direction | Description |
+|---------------|-----------|-------------|
+| `m2m/device/<endpoint>/reg` | Publish | Device registration event |
+| `m2m/device/<endpoint>/unreg` | Publish | Device unregistration event |
+| `m2m/device/<endpoint>/obs` | Publish | Observation context data |
+| `m2m/device/<endpoint>/resp` | Publish | Response values from observations |
+| `m2m/device` | Publish | General device state updates |
+
+#### Registration Topics
+
+**`m2m/device/<endpoint>/reg`**
+- Published when a device registers with the LWM2M server
+- Payload: JSON containing registration information (RegInfo object)
+
+**`m2m/device/<endpoint>/unreg`**
+- Published when a device unregisters from the LWM2M server
+- Payload: JSON containing registration information (RegInfo object)
+
+#### Observation Topics
+
+**`m2m/device/<endpoint>/obs`**
+- Published when a new observation is received from a device
+- Payload: JSON containing:
+  - `observation`: ID, registration ID, context, protocol data
+  - `registration`: ID, endpoint, lifetime, binding, last update
+  - `supportedObjects`: Array of supported object IDs and versions
+  - `attributes`: Additional registration attributes
+
+**`m2m/device/<endpoint>/resp`**
+- Published when a response is received for an observation
+- Payload: JSON containing:
+  - `observation`: Observation ID and path
+  - `value`: Resource path, type, and value (for single observations)
+  - OR `values`: Map of resource paths to values (for composite observations)
+
+#### General Device Topics
+
+**`m2m/device`**
+- Published for general device state updates (awake, sleeping, updated)
+- Payload: JSON containing registration information (RegInfo object)
+
+### Security Store Topics (iot/sec/)
+
+| Topic Pattern | Direction | Description |
+|---------------|-----------|-------------|
+| `iot/sec/read/<endpoint>` | Subscribe | Request security info for an endpoint |
+| `iot/sec/create` | Subscribe | Create new security info |
+| `iot/sec/update` | Subscribe | Update existing security info |
+| `iot/sec/delete/<endpoint>` | Subscribe | Delete security info |
+| `iot/sec/list` | Subscribe | List all security entries |
+| `iot/sec/response/read/<endpoint>` | Publish | Response for read request |
+| `iot/sec/response/create` | Publish | Response for create request |
+| `iot/sec/response/update` | Publish | Response for update request |
+| `iot/sec/response/delete/<endpoint>` | Publish | Response for delete request |
+| `iot/sec/response/list` | Publish | Response for list request |
+
+#### Security Request Topics
+
+**`iot/sec/read/<endpoint>`**
+- Request security info for a specific endpoint
+- Payload: Not required (endpoint extracted from topic)
+
+**`iot/sec/create`**
+- Create new security info
+- Payload: JSON with mode, endpoint, and security parameters
+  ```json
+  {
+    "mode": "PSK",
+    "endpoint": "device1",
+    "pskIdentity": "myidentity",
+    "preSharedKey": "0123456789abcdef"
+  }
+  ```
+
+**`iot/sec/update`**
+- Update existing security info
+- Payload: JSON with mode, endpoint, and updated security parameters
+
+**`iot/sec/delete/<endpoint>`**
+- Delete security info for a specific endpoint
+- Payload: Not required (endpoint extracted from topic)
+
+**`iot/sec/list`**
+- List all security entries
+- Payload: Not required
+
+#### Security Response Topics
+
+All responses follow a common format:
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+
+For read/list operations, the payload contains the security info data:
+```json
+{
+  "endpoint": "device1",
+  "mode": "PSK",
+  "pskIdentity": "myidentity",
+  "preSharedKey": "0123456789abcdef"
+}
+```
+
+### Subscription Topics (ind/)
+
+| Topic Pattern | Direction | Description |
+|---------------|-----------|-------------|
+| `ind/#` | Subscribe | Device indication messages |
+
+The `MqttAdapter` subscribes to `ind/#` to handle device indication messages from external sources.
+
+### Topic Hierarchy
+
+```
+m2m/
+└── device/
+    ├── <endpoint>/
+    │   ├── reg          # Registration events
+    │   ├── unreg        # Unregistration events
+    │   ├── obs          # Observation context data
+    │   └── resp         # Response values
+    └──                  # General device state
+
+iot/
+└── sec/
+    ├── read/<endpoint>  # Read security info
+    ├── create           # Create security info
+    ├── update           # Update security info
+    ├── delete/<endpoint> # Delete security info
+    ├── list             # List all security entries
+    └── response/
+        ├── read/<endpoint>  # Read response
+        ├── create           # Create response
+        ├── update           # Update response
+        ├── delete/<endpoint> # Delete response
+        └── list             # List response
+
+ind/
+└── #                  # Device indications
+```
+
 ### Web Server
 The `WebServer` provides:
 - Static resource serving (Vue.js frontend)
