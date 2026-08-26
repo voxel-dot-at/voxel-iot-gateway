@@ -45,6 +45,8 @@ bin/
 !**/certificates/*.pem
 *~
 
-voxel-iot-*webapp/components.d.ts
+webapp/components.d.ts
 data/security.db
 voxel-iot-gateway-*/
+webapp/package-lock.json
+webapp/yarn.lock
