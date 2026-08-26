@@ -326,9 +326,104 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
 
     @Override
     public void newObservation(Observation observation, Registration registration) {
-        LOG.info("=== newObservation() called for endpoint: {} ===", registration.getEndpoint());
-        LOG.debug("observation: {}", observation);
-        LOG.info("New observation: id={}, endpoint={}", observation.getId(), registration.getEndpoint());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== newObservation() called for endpoint: {} ===", endpoint);
+        
+        // Print observation context data
+        LOG.info("Observation ID: {}", observation.getId());
+        LOG.info("Observation Registration ID: {}", observation.getRegistrationId());
+        LOG.info("Observation Context: {}", observation.getContext());
+        LOG.info("Observation Protocol Data: {}", observation.getProtocolData());
+        
+        // Print registration context data
+        LOG.info("Registration ID: {}", registration.getId());
+        LOG.info("Registration Endpoint: {}", registration.getEndpoint());
+        LOG.info("Registration Lifetime: {}", registration.getLifeTimeInSec());
+        LOG.info("Registration Binding: {}", registration.getBindingMode());
+        LOG.info("Registration Last Update: {}", registration.getLastUpdate());
+        
+        // Print supported objects
+        Map<Integer, Version> supportedObjects = registration.getSupportedObject();
+        LOG.info("Supported Objects Count: {}", supportedObjects.size());
+        for (Map.Entry<Integer, Version> entry : supportedObjects.entrySet()) {
+            LOG.info("  Supported Object: {} (version: {})", entry.getKey(), entry.getValue());
+        }
+        
+        // Print additional attributes
+        Map<String, String> additionalAttrs = registration.getAdditionalRegistrationAttributes();
+        if (!additionalAttrs.isEmpty()) {
+            LOG.info("Additional Registration Attributes:");
+            for (Map.Entry<String, String> entry : additionalAttrs.entrySet()) {
+                LOG.info("  {} = {}", entry.getKey(), entry.getValue());
+            }
+        }
+        
+        // Build and publish context data to MQTT
+        try {
+            // Create a comprehensive JSON payload with all context data
+            com.fasterxml.jackson.databind.node.ObjectNode contextData = objectMapper.createObjectNode();
+            
+            // Observation details
+            com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+            obsNode.put("id", observation.getId().toString());
+            obsNode.put("registrationId", observation.getRegistrationId());
+            if (!observation.getContext().isEmpty()) {
+                com.fasterxml.jackson.databind.node.ObjectNode contextNode = objectMapper.createObjectNode();
+                for (Map.Entry<String, String> entry : observation.getContext().entrySet()) {
+                    contextNode.put(entry.getKey(), entry.getValue());
+                }
+                obsNode.set("context", contextNode);
+            }
+            if (!observation.getProtocolData().isEmpty()) {
+                com.fasterxml.jackson.databind.node.ObjectNode protoNode = objectMapper.createObjectNode();
+                for (Map.Entry<String, String> entry : observation.getProtocolData().entrySet()) {
+                    protoNode.put(entry.getKey(), entry.getValue());
+                }
+                obsNode.set("protocolData", protoNode);
+            }
+            contextData.set("observation", obsNode);
+            
+            // Registration details
+            com.fasterxml.jackson.databind.node.ObjectNode regNode = objectMapper.createObjectNode();
+            regNode.put("id", registration.getId());
+            regNode.put("endpoint", registration.getEndpoint());
+            regNode.put("lifetime", registration.getLifeTimeInSec());
+            regNode.put("binding", registration.getBindingMode() != null ? registration.getBindingMode().toString() : "null");
+            regNode.put("lastUpdate", registration.getLastUpdate() != null ? registration.getLastUpdate().toString() : "null");
+            contextData.set("registration", regNode);
+            
+            // Supported objects
+            com.fasterxml.jackson.databind.node.ArrayNode supportedObjs = objectMapper.createArrayNode();
+            for (Map.Entry<Integer, Version> entry : supportedObjects.entrySet()) {
+                com.fasterxml.jackson.databind.node.ObjectNode objNode = objectMapper.createObjectNode();
+                objNode.put("id", entry.getKey());
+                objNode.put("version", entry.getValue() != null ? entry.getValue().toString() : "null");
+                supportedObjs.add(objNode);
+            }
+            contextData.set("supportedObjects", supportedObjs);
+            
+            // Additional attributes
+            if (!additionalAttrs.isEmpty()) {
+                com.fasterxml.jackson.databind.node.ObjectNode attrsNode = objectMapper.createObjectNode();
+                for (Map.Entry<String, String> entry : additionalAttrs.entrySet()) {
+                    attrsNode.put(entry.getKey(), entry.getValue());
+                }
+                contextData.set("attributes", attrsNode);
+            }
+            
+            // Publish to MQTT
+            String topic = TOPIC + "/obs/" + endpoint;
+            String payload = objectMapper.writeValueAsString(contextData);
+            broker.publish(topic, payload);
+            LOG.info("Published observation context to MQTT topic: {}", topic);
+            LOG.debug("Payload: {}", payload);
+            
+        } catch (JsonProcessingException e) {
+            LOG.warn("Failed to serialize observation context for endpoint: {}", endpoint, e);
+        } catch (Exception e) {
+            LOG.warn("Failed to publish observation context for endpoint: {}", endpoint, e);
+        }
+        
         LOG.info("=== newObservation() completed ===");
     }
 
