@@ -68,8 +68,8 @@ public class SimpleIoTGateway {
             lwm2mServer.getRegistrationService().addListener(deviceAdapter);
             lwm2mServer.getObservationService().addListener(deviceAdapter);
 
-            // Setup MQTT client
-            MqttServer mqttServer = MqttServer.createServer();
+            // Setup MQTT client with security store support
+            MqttServer mqttServer = MqttServer.createServer((org.eclipse.leshan.servers.security.EditableSecurityStore) lwm2mServer.getSecurityStore(), lwm2mServer);
 
             // Setup Web server
             at.voxel.iotgw.Server webServer = null;

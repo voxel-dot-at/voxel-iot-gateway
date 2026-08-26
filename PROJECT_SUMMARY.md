@@ -54,6 +54,7 @@ at.voxel.iotgw/
 - **Device Adapter**: Handles device registration/unregistration events
 - **State Publishing**: Publishes device state to MQTT topics
 - **Subscription Management**: Topic pattern matching and subscription handling
+- **Security Store Operations**: Exposes security store CRUD operations via MQTT topics
 
 ### Web Interface
 - **REST API**: `/api/clients`, `/api/security`, `/api/server`, `/api/event`
@@ -112,7 +113,7 @@ By default, the gateway uses SQLite for security information persistence:
 │  │              │  │              │  │                   │  │
 │  │ - CoAP/DTLS  │  │ - Jetty      │  │ - MQTT Client     │  │
 │  │ - Endpoints  │  │ - REST API   │  │ - Subscriptions   │  │
-│  │ - Security   │  │ - Vue.js UI  │  │ - Publishing      │  │
+│  │ - Security   │  │ - Vue.js UI  │  │ - Security CRUD   │  │
 │  └──────────────┘  └──────────────┘  └───────────────────┘  │
 │                                                               │
 │  ┌─────────────────────────────────────────────────────┐    │
@@ -137,6 +138,16 @@ The `MqttAdapter` provides:
 - Topic subscription with pattern matching
 - Message listener support
 - Automatic reconnection handling
+
+### MQTT Security Store Operations
+The `MqttServer` exposes security store operations via MQTT topics:
+- **Read**: `iot/sec/read/<endpoint>` - Retrieve security info for an endpoint
+- **Create**: `iot/sec/create` - Create new security info (PSK, X509, RPK, OSCORE)
+- **Update**: `iot/sec/update` - Update existing security info
+- **Delete**: `iot/sec/delete/<endpoint>` - Remove security info
+- **List**: `iot/sec/list` - List all security entries
+
+Responses are published to `iot/sec/response/...` topics with JSON payloads containing success/error status or security info data.
 
 ### Web Server
 The `WebServer` provides:
