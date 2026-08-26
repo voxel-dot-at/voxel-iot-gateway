@@ -1,47 +1,75 @@
-# Voxel IoT Gateway - Isolated Project
+# Voxel IoT Gateway
 
 ## Overview
-This is an isolated version of the IoT Gateway project that was originally part of the Leshan project. The goal was to create a self-contained Maven project that can be built independently without requiring the full Leshan parent project structure.
+The Voxel IoT Gateway is a self-contained LWM2M server implementation that bridges IoT devices with backend systems via MQTT. It provides device registration management, security handling, and web-based administration.
 
-## What We've Done
+## Architecture
 
-1. **Created a new directory** at `/home/simon/proj/schauer_iot/repos/voxel-iot-gateway`
+The gateway consists of several key components:
 
-2. **Initialized a Maven project** with a simplified pom.xml that includes:
-   - Core dependencies: Californium (CoAP), HiveMQ MQTT Client, Logback, Jackson
-   - Additional dependencies: Picocli (command line parsing), Jedis (Redis client)
-   - Proper Maven build configuration
+### Core Components
 
-3. **Created a minimal working implementation**:
-   - Simple IoTGateway.java class that demonstrates the basic structure
-   - No dependency on the complex Leshan framework
+| Component | Description |
+|-----------|-------------|
+| `SimpleIoTGateway` | Main entry point and application orchestrator |
+| `Lwm2mServer` | LWM2M server configuration and endpoint setup |
+| `WebServer` | Jetty-based web server with REST API |
+| `MqttServer` | MQTT client for broker communication |
+| `MqttAdapter` | MQTT adapter with subscription management |
+| `IoTDeviceAdapter` | Device registration listener and handler |
+| `SqliteSecurityStore` | SQLite-based security information persistence |
 
-4. **Built the project successfully**:
-   - Created a JAR file: `voxel-iot-gateway-1.0.0.jar`
-   - Verified the JAR runs correctly
-
-## Project Structure
+### Package Structure
 
 ```
-voxel-iot-gateway/
-├── pom.xml                 # Maven configuration
-├── README.md               # Project documentation
-├── src/
-│   └── main/
-│       ├── java/
-│       │   └── at/voxel/iotgw/
-│       │       └── IoTGateway.java  # Main application class
-│       └── resources/
-└── target/                 # Build output directory
-    └── voxel-iot-gateway-1.0.0.jar
+at.voxel.iotgw/
+├── SimpleIoTGateway.java      # Main entry point
+├── Server.java                # Abstract server base class
+├── WebServer.java             # Jetty web server implementation
+├── IoTDeviceAdapter.java      # Device registration handler
+├── RegInfo.java               # Registration info model
+├── cli/                       # Command line interface
+├── lwm2m/                     # LWM2M server configuration
+├── mqtt/                      # MQTT client and adapter
+├── security/                  # Security store implementations
+├── servlet/                   # REST API servlets
+├── model/                     # Object model utilities
+└── servlet/json/              # JSON serialization utilities
 ```
 
 ## Key Features
 
-- **Self-contained**: No dependency on the Leshan parent project
-- **Minimal dependencies**: Only includes necessary libraries
-- **Buildable**: Can be compiled and packaged with Maven
-- **Runnable**: JAR file can be executed directly
+### LWM2M Server
+- **Protocol Support**: CoAP, CoAPS (CoAP over DTLS), CoAP-TCP, CoAPS-TCP
+- **Security Modes**: PSK, RPK, X.509, OSCORE
+- **Model Management**: Dynamic object model loading from files
+- **Registration**: Device registration with lifecycle management
+
+### Security
+- **SQLite Persistence**: `SqliteSecurityStore` for persistent security info
+- **Redis Support**: Optional Redis-based security store
+- **Multiple Auth Modes**: PSK, RPK, X.509 certificate authentication
+
+### MQTT Integration
+- **Device Adapter**: Handles device registration/unregistration events
+- **State Publishing**: Publishes device state to MQTT topics
+- **Subscription Management**: Topic pattern matching and subscription handling
+
+### Web Interface
+- **REST API**: `/api/clients`, `/api/security`, `/api/server`, `/api/event`
+- **Vue.js Frontend**: Modern web-based administration interface
+- **Real-time Updates**: Event streaming via SSE
+
+## Dependencies
+
+### Core Dependencies
+- **Leshan**: LWM2M server framework (2.0.0-SNAPSHOT)
+- **Californium**: CoAP implementation
+- **Jetty**: Web server (v12.0.37)
+- **SQLite**: JDBC driver for security persistence
+- **Paho MQTT**: MQTT client library
+- **Jackson**: JSON processing
+- **Picocli**: Command line parsing
 
 ## How to Build
 
@@ -50,11 +78,88 @@ voxel-iot-gateway/
 mvn clean compile
 
 # Build JAR file
-mvn package -DskipTests
+mvn package
 
 # Run the application
-java -cp target/voxel-iot-gateway-1.0.0.jar at.voxel.iotgw.IoTGateway
+java -cp target/voxel-iot-gateway-1.0.0.jar at.voxel.iotgw.SimpleIoTGateway
 ```
+
+## Configuration
+
+### Command Line Options
+
+The gateway supports various CLI options:
+- `--local-port`: CoAP port (default: 5683)
+- `--secure-local-port`: CoAPS port (default: 5684)
+- `--web-port`: Web server port (default: 8080)
+- `--redis`: Redis connection string (optional)
+- `--models-folder`: Custom object models directory
+
+### Security Store
+
+By default, the gateway uses SQLite for security information persistence:
+- Database file: `data/security.db`
+- Stores PSK keys, certificates, and OSCORE settings
+
+## Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SimpleIoTGateway                          │
+│                                                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐  │
+│  │ Lwm2mServer  │  │ WebServer    │  │ MqttServer        │  │
+│  │              │  │              │  │                   │  │
+│  │ - CoAP/DTLS  │  │ - Jetty      │  │ - MQTT Client     │  │
+│  │ - Endpoints  │  │ - REST API   │  │ - Subscriptions   │  │
+│  │ - Security   │  │ - Vue.js UI  │  │ - Publishing      │  │
+│  └──────────────┘  └──────────────┘  └───────────────────┘  │
+│                                                               │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ IoTDeviceAdapter (RegistrationListener)             │    │
+│  │ - Device registration/unregistration handling       │    │
+│  │ - MQTT state publishing                             │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Development Notes
+
+### SQLite Security Store
+The `SqliteSecurityStore` replaces the default `FileSecurityStore`:
+- Stores serialized `SecurityInfo` objects in SQLite BLOB columns
+- Provides persistence across server restarts
+- Thread-safe with proper locking
+
+### MQTT Integration
+The `MqttAdapter` provides:
+- Connection management
+- Topic subscription with pattern matching
+- Message listener support
+- Automatic reconnection handling
+
+### Web Server
+The `WebServer` provides:
+- Static resource serving (Vue.js frontend)
+- REST API endpoints for device management
+- Security configuration
+- Server status monitoring
+
+## License
+
+Eclipse Public License 2.0 / Eclipse Distribution License 1.0
+
+## Contributing
+
+Contributions are welcome. Please ensure:
+1. Code compiles with `mvn compile`
+2. Tests pass with `mvn test`
+3. Changes are documented
+
+---
+*Based on Eclipse Leshan framework*
+*Version: 1.0.0*
+*Date: 2024*
 
 ## Limitations
 
