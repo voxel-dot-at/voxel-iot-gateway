@@ -329,6 +329,16 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
         String endpoint = registration.getEndpoint();
         LOG.info("=== newObservation() called for endpoint: {} ===", endpoint);
         
+        // Extract observed resource path from observation
+        String resourcePath = "unknown";
+        if (observation instanceof org.eclipse.leshan.core.observation.SingleObservation) {
+            resourcePath = ((org.eclipse.leshan.core.observation.SingleObservation) observation).getPath().toString();
+        } else if (observation instanceof org.eclipse.leshan.core.observation.CompositeObservation) {
+            resourcePath = ((org.eclipse.leshan.core.observation.CompositeObservation) observation).getPaths().toString();
+        }
+        LOG.info("Observed Resource Path: {}", resourcePath);
+        LOG.info("Note: Actual transmitted values are received in onResponse() callback");
+        
         // Print observation context data
         LOG.info("Observation ID: {}", observation.getId());
         LOG.info("Observation Registration ID: {}", observation.getRegistrationId());
@@ -367,6 +377,7 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
             obsNode.put("id", observation.getId().toString());
             obsNode.put("registrationId", observation.getRegistrationId());
+            obsNode.put("resourcePath", resourcePath);
             if (!observation.getContext().isEmpty()) {
                 com.fasterxml.jackson.databind.node.ObjectNode contextNode = objectMapper.createObjectNode();
                 for (Map.Entry<String, String> entry : observation.getContext().entrySet()) {
@@ -437,19 +448,125 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
 
     @Override
     public void onResponse(org.eclipse.leshan.core.observation.SingleObservation observation, Registration registration, org.eclipse.leshan.core.response.ObserveResponse response) {
-        LOG.info("=== onResponse() called for endpoint: {} ===", registration.getEndpoint());
-        LOG.debug("observation: {}", observation);
-        LOG.debug("response: {}", response);
-        LOG.info("Response received: id={}, success={}", observation.getId(), response.isSuccess());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== onResponse() called for endpoint: {} ===", endpoint);
+        LOG.info("Observation ID: {}", observation.getId());
+        LOG.info("Response code: {}", response.getCode());
+        LOG.info("Response success: {}", response.isSuccess());
+        
+        if (response.isSuccess()) {
+            // Extract the LwM2mNode content
+            org.eclipse.leshan.core.node.LwM2mNode content = response.getContent();
+            if (content != null) {
+                LOG.info("Content type: {}", content.getClass().getSimpleName());
+                
+                // Build JSON payload with observation and value data
+                try {
+                    com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                    
+                    // Observation details
+                    com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                    obsNode.put("id", observation.getId().toString());
+                    obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                    payload.set("observation", obsNode);
+                    
+                    // Value data - cast to LwM2mResource to get the value
+                    com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
+                    valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                    valueNode.put("type", content.getClass().getSimpleName());
+                    
+                    if (content instanceof org.eclipse.leshan.core.node.LwM2mResource) {
+                        org.eclipse.leshan.core.node.LwM2mResource resource = (org.eclipse.leshan.core.node.LwM2mResource) content;
+                        Object value = resource.getValue();
+                        valueNode.put("value", value != null ? value.toString() : "null");
+                    } else {
+                        valueNode.put("value", "null");
+                    }
+                    payload.set("value", valueNode);
+                    
+                    // Publish to MQTT
+                    String topic = TOPIC + "/resp/" + endpoint;
+                    String jsonPayload = objectMapper.writeValueAsString(payload);
+                    broker.publish(topic, jsonPayload);
+                    LOG.info("Published response value to MQTT topic: {}", topic);
+                    LOG.debug("Payload: {}", jsonPayload);
+                    
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Failed to serialize response value for endpoint: {}", endpoint, e);
+                }
+            } else {
+                LOG.warn("Response content is null for endpoint: {}", endpoint);
+            }
+        } else {
+            LOG.warn("Response failed for endpoint: {} - Code: {}, Error: {}", 
+                endpoint, response.getCode(), response.getErrorMessage());
+        }
+        
         LOG.info("=== onResponse() completed ===");
     }
 
     @Override
     public void onResponse(org.eclipse.leshan.core.observation.CompositeObservation observation, Registration registration, org.eclipse.leshan.core.response.ObserveCompositeResponse response) {
-        LOG.info("=== onResponse() called for composite observation, endpoint: {} ===", registration.getEndpoint());
-        LOG.debug("observation: {}", observation);
-        LOG.debug("response: {}", response);
-        LOG.info("Composite response received: success={}", response.isSuccess());
+        String endpoint = registration.getEndpoint();
+        LOG.info("=== onResponse() called for composite observation, endpoint: {} ===", endpoint);
+        LOG.info("Observation ID: {}", observation.getId());
+        LOG.info("Response code: {}", response.getCode());
+        LOG.info("Response success: {}", response.isSuccess());
+        
+        if (response.isSuccess()) {
+            // Extract the Map<LwM2mPath, LwM2mNode> content
+            java.util.Map<org.eclipse.leshan.core.node.LwM2mPath, org.eclipse.leshan.core.node.LwM2mNode> content = response.getContent();
+            if (content != null && !content.isEmpty()) {
+                LOG.info("Composite content size: {}", content.size());
+                
+                // Build JSON payload with observation and all values
+                try {
+                    com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                    
+                    // Observation details
+                    com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                    obsNode.put("id", observation.getId().toString());
+                    payload.set("observation", obsNode);
+                    
+                    // All value data
+                    com.fasterxml.jackson.databind.node.ObjectNode valuesNode = objectMapper.createObjectNode();
+                    for (java.util.Map.Entry<org.eclipse.leshan.core.node.LwM2mPath, org.eclipse.leshan.core.node.LwM2mNode> entry : content.entrySet()) {
+                        org.eclipse.leshan.core.node.LwM2mPath path = entry.getKey();
+                        org.eclipse.leshan.core.node.LwM2mNode node = entry.getValue();
+                        
+                        com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
+                        valueNode.put("path", path.toString());
+                        valueNode.put("type", node.getClass().getSimpleName());
+                        
+                        if (node instanceof org.eclipse.leshan.core.node.LwM2mResource) {
+                            org.eclipse.leshan.core.node.LwM2mResource resource = (org.eclipse.leshan.core.node.LwM2mResource) node;
+                            Object value = resource.getValue();
+                            valueNode.put("value", value != null ? value.toString() : "null");
+                        } else {
+                            valueNode.put("value", "null");
+                        }
+                        valuesNode.set(path.toString(), valueNode);
+                    }
+                    payload.set("values", valuesNode);
+                    
+                    // Publish to MQTT
+                    String topic = TOPIC + "/resp/" + endpoint;
+                    String jsonPayload = objectMapper.writeValueAsString(payload);
+                    broker.publish(topic, jsonPayload);
+                    LOG.info("Published composite response values to MQTT topic: {}", topic);
+                    LOG.debug("Payload: {}", jsonPayload);
+                    
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Failed to serialize composite response values for endpoint: {}", endpoint, e);
+                }
+            } else {
+                LOG.warn("Composite response content is null or empty for endpoint: {}", endpoint);
+            }
+        } else {
+            LOG.warn("Composite response failed for endpoint: {} - Code: {}, Error: {}", 
+                endpoint, response.getCode(), response.getErrorMessage());
+        }
+        
         LOG.info("=== onResponse() completed ===");
     }
 
