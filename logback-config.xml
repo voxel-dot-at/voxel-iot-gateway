@@ -23,11 +23,12 @@ Contributors:
 		</encoder>
 	</appender>
 
-	<root level="debug">
+	<root level="INFO">
 		<appender-ref ref="TERMINAL" />
 	</root>
 	
 	<logger name="*" level="DEBUG"/>
+	<logger name="at.voxel.iotgw.*" level="DEBUG"/>
 	<logger name="org.eclipse.leshan" level="DEBUG"/>
 	<logger name="org.eclipse.leshan.transport.californium.LwM2mCoapResource" level="DEBUG"/>
 	<logger name="org.eclipse.leshan.server.security.SecurityCheck" level="DEBUG"/>
