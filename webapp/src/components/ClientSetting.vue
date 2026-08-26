@@ -19,10 +19,10 @@
         :prefix="'Timeout :'"
         :items="timeoutList"
         item-value="val"
-        item-text="txt"
+        item-title="txt"
         v-model="timeout"
-        :append-outer-icon="$icons.mdiHelpCircleOutline"
-        @click:append-outer="openTimeoutHelps"
+        :append-inner-icon="$icons.mdiHelpCircleOutline"
+        @click:append-inner="openTimeoutHelps"
       ></v-select>
     </div>
     <div title="Content Format used to send request handling single value">
@@ -48,6 +48,10 @@
 <script>
 import { preference } from "vue-preferences";
 
+const timeoutPreference = preference("timeout", { defaultValue: 5 });
+const singleFormatPreference = preference("singleformat", { defaultValue: "TLV" });
+const multiFormatPreference = preference("multiformat", { defaultValue: "TLV" });
+
 export default {
   data() {
     return {
@@ -71,9 +75,18 @@ export default {
     };
   },
   computed: {
-    timeout: preference("timeout", { defaultValue: 5 }),
-    singleformat: preference("singleformat", { defaultValue: "TLV" }),
-    multiformat: preference("multiformat", { defaultValue: "TLV" }),
+    timeout: {
+      get: () => timeoutPreference.get(),
+      set: (value) => timeoutPreference.set(value),
+    },
+    singleformat: {
+      get: () => singleFormatPreference.get(),
+      set: (value) => singleFormatPreference.set(value),
+    },
+    multiformat: {
+      get: () => multiFormatPreference.get(),
+      set: (value) => multiFormatPreference.set(value),
+    },
   },
   methods: {
     openTimeoutHelps() {

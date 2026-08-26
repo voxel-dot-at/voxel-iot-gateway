@@ -31,7 +31,7 @@
         ></v-divider>
         <v-text-field
           v-model="search"
-          :append-icon="$icons.mdiMagnify"
+          :append-inner-icon="$icons.mdiMagnify"
           label="Search"
           single-line
           hide-details

@@ -48,7 +48,7 @@
           ></v-divider>
           <v-text-field
             v-model="search"
-            :append-icon="$icons.mdiMagnify"
+            :append-inner-icon="$icons.mdiMagnify"
             label="Search"
             single-line
             hide-details
@@ -95,7 +95,7 @@ export default {
   methods: {
     openLink(event, { item }){
       console.log('LINK', item)
-      this.$router.push(`/clients/${item.registrationId}/3`);
+      this.$router.push(`/clients/${encodeURIComponent(item.endpoint)}/3`);
     },
   },
   mounted() {

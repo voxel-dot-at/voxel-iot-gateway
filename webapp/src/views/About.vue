@@ -16,6 +16,7 @@ import leshanLogo from '@/assets/image/multicolor-leshan.png';
 export default {
   data() {
     return {
+      leshanLogo,
       version: import.meta.env.VITE_APP_VERSION,
       commitid: import.meta.env.VITE_APP_COMMIT_ID,
     };

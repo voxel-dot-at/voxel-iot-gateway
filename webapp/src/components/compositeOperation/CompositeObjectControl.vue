@@ -31,14 +31,13 @@
       @write="write($event)"
     />
     <composite-operation-setting-menu>
-      <template v-slot:activator="{ on, attrs }">
+      <template v-slot:activator="{ props }">
         <v-btn
           class="ma-1"
           size="small"
           min-width="0"
           elevation="0"
-          v-bind="attrs"
-          v-on="on"
+          v-bind="props"
           title="Composite Operation Settings"
         >
           <v-icon size="small"> {{ $icons.mdiTune }}</v-icon>

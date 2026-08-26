@@ -65,7 +65,7 @@
       <span v-else-if="node.path.type == 'object'">
         <div v-for="instance in node.instances" :key="instance.path">
           <h5 class="pa-1">Instance {{ instance.id }}</h5>
-          <v-expansion-panels accordion multiple>
+          <v-expansion-panels multiple>
             <resource-expansion-panel
               v-for="resource in instance.resources"
               :key="resource.path"
@@ -77,7 +77,7 @@
       </span>
       <!-- object instance-->
       <div v-else-if="node.path.type == 'objectinstance'">
-        <v-expansion-panels accordion multiple>
+          <v-expansion-panels multiple>
           <resource-expansion-panel
             v-for="resource in node.resources"
             :key="resource.path"
@@ -88,7 +88,7 @@
       </div>
       <!-- object instance-->
       <div v-else-if="node.path.type == 'resource'">
-        <v-expansion-panels accordion multiple>
+          <v-expansion-panels multiple>
           <resource-expansion-panel
             :resource="node.resource"
             :endpoint="endpoint"
@@ -97,7 +97,7 @@
       </div>
       <!-- resource instance case -->
       <div v-else-if="node.path.type == 'resourceinstance'">
-        <v-expansion-panels accordion multiple>
+          <v-expansion-panels multiple>
           <resource-instance-expansion-panel
             :resource="node.resource"
             :resourceInstanceId="node.resourceInstanceId"

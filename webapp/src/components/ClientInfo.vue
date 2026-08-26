@@ -13,9 +13,9 @@
 <template>
   <span>
     <!-- info icon -->
-    <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small">
+    <v-tooltip :location="tooltipLocation">
+      <template v-slot:activator="{ props }">
+        <v-icon v-bind="props" :size="small ? 'small' : undefined">
           {{ $icons.mdiInformation }}
         </v-icon>
       </template>
@@ -39,18 +39,18 @@
       </span>
     </v-tooltip>
     <!-- secure icon -->
-    <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small" v-visible="registration.secure">
+    <v-tooltip :location="tooltipLocation">
+      <template v-slot:activator="{ props }">
+        <v-icon v-bind="props" :size="small ? 'small' : undefined" v-visible="registration.secure">
           {{ $icons.mdiLock }}
         </v-icon>
       </template>
       Communication over DTLS
     </v-tooltip>
     <!-- secure icon -->
-    <v-tooltip :left="tooltipleft" :bottom="tooltipbottom">
-      <template v-slot:activator="{ on }">
-        <v-icon v-on="on" :small="small" v-visible="registration.sleeping">
+    <v-tooltip :location="tooltipLocation">
+      <template v-slot:activator="{ props }">
+        <v-icon v-bind="props" :size="small ? 'small' : undefined" v-visible="registration.sleeping">
           {{ $icons.mdiSleep }}
         </v-icon>
       </template>
@@ -60,6 +60,13 @@
 </template>
 <script>
 export default {
+  computed: {
+    tooltipLocation() {
+      if (this.tooltipbottom) return "bottom";
+      if (this.tooltipleft) return "left";
+      return "top";
+    },
+  },
   props: {
     registration: Object,
     small: {

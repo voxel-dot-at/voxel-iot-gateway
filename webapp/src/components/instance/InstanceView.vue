@@ -35,7 +35,6 @@
     </h4>
 
     <v-expansion-panels
-      accordion
       multiple
       v-if="objectdef && typeof instanceId == 'number' && endpoint"
     >

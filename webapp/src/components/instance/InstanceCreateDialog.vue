@@ -50,10 +50,10 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <!-- dialog buttons-->
-        <v-btn text @click="create">
+        <v-btn variant="text" @click="create">
           Create
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>

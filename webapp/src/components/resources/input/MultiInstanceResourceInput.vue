@@ -28,7 +28,7 @@
               (v) => /^(0|[1-9]\d*)$/.test(v) || 'Must be a positive Integer',
               (v) => !isAlreadyUsed(v, index) || 'ID already used',
             ]"
-            @input="triggerValidation(index)"
+            @update:model-value="triggerValidation(index)"
           />
         </v-col>
         <v-col>
@@ -55,17 +55,17 @@ import SingleValueInput from "../../values/input/SingleValueInput.vue";
 export default {
   components: { SingleValueInput },
   props: {
-    value: null, // the input values for this Multi Instance resource (v-model) {id1:val1, id2:val2}
+    modelValue: null, // the input values for this Multi Instance resource (v-model) {id1:val1, id2:val2}
     resourcedef: Object, // the model of the resource
     hint: { type: String, default: null }, // hint displayed on `?` tooltip. If `null`, the "?" icon is not displayed"
   },
   computed: {
     instances: {
       get() {
-        if (!this.value) {
+        if (!this.modelValue) {
           return [];
         } else {
-          return this.value;
+          return this.modelValue;
         }
       },
     },
@@ -90,14 +90,14 @@ export default {
       return instance !== undefined;
     },
     addNewInstance() {
-      this.$emit("input", [...this.instances, { id: this.newId(), val: null }]);
+      this.$emit("update:modelValue", [...this.instances, { id: this.newId(), val: null }]);
     },
     removeAllInstances() {
-      this.$emit("input", []);
+      this.$emit("update:modelValue", []);
     },
     removeInstance(index) {
       this.instances.splice(index, 1);
-      this.$emit("input", this.instances);
+      this.$emit("update:modelValue", this.instances);
     },
     newId() {
       let i = 0;

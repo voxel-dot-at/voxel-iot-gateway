@@ -12,8 +12,8 @@
   ----------------------------------------------------------------------------->
 <template>
   <v-menu v-model="menu" :close-on-content-click="false" offset-y>
-    <template v-slot:activator="{ on, attrs }">
-      <slot name="activator" :attrs="attrs" :on="on" />
+    <template v-slot:activator="{ props }">
+      <slot name="activator" v-bind="props" />
     </template>
     <v-card>
       <v-list>

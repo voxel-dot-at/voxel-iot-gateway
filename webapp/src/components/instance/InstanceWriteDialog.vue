@@ -41,13 +41,13 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <!-- dialog buttons-->
-        <v-btn text @click="update">
+        <v-btn variant="text" @click="update">
           Update
         </v-btn>
-        <v-btn text @click="replace">
+        <v-btn variant="text" @click="replace">
           Replace
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>

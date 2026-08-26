@@ -22,7 +22,7 @@ import logo from '../assets/image/logo.png';
 
     <!-- See more details about why we hide-slider and replace it by custom css (active-class="active") :
          https://github.com/eclipse/leshan/issues/1134 -->
-    <v-tabs :right hide-slider >
+    <v-tabs hide-slider>
       <v-tab
         v-for="page in pages"
         :key="page.title"

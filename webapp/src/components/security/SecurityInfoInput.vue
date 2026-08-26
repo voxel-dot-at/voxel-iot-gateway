@@ -36,21 +36,21 @@
           <!-- PSK Mode -->
           <div v-if="tlsMode === 'psk'">
             <v-text-field
-              v-model="tls.identity"
+              v-model="tlsState.details.identity"
               label="Identity"
               class="mt-2"
             />
             <v-text-field
-              v-model="tls.key"
+              v-model="tlsState.details.key"
               label="Pre-shared Key"
               class="mt-2"
             />
           </div>
 
           <!-- RPK Mode -->
-          <div v-if="tlsMode === 'rpK'">
+          <div v-if="tlsMode === 'rpk'">
             <v-text-field
-              v-model="tls.key"
+              v-model="tlsState.details.key"
               label="Public Key"
               class="mt-2"
             />
@@ -59,7 +59,7 @@
           <!-- X509 Mode -->
           <div v-if="tlsMode === 'x509'">
             <v-text-field
-              v-model="tls.identity"
+              v-model="tlsState.details.identity"
               label="Certificate CN"
               class="mt-2"
             />
@@ -83,17 +83,17 @@
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-text-field
-            v-model="oscore.sid"
+              v-model="oscoreState.sid"
             label="Sender ID (SID)"
             class="mt-2"
           />
           <v-text-field
-            v-model="oscore.msec"
+              v-model="oscoreState.msec"
             label="Master Secret (MSEC)"
             class="mt-2"
           />
           <v-text-field
-            v-model="oscore.rid"
+              v-model="oscoreState.rid"
             label="Recipient ID (RID)"
             class="mt-2"
           />
@@ -119,14 +119,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:tls', 'update:oscore']);
 
-const tlsModes = ['psk', 'rpK', 'x509'];
+const tlsModes = ['psk', 'rpk', 'x509'];
 
 // Internal state
 const useDTLS = ref(true);
 const useOSCORE = ref(false);
 const tlsMode = ref('psk');
-const tls = ref({ mode: 'psk', details: {} });
-const oscore = ref({});
+const tlsState = ref({ mode: 'psk', details: {} });
+const oscoreState = ref({});
 
 /**
  * Initialize OSCORE state from props
@@ -134,10 +134,10 @@ const oscore = ref({});
 function initOscore(oscoreValue) {
   if (oscoreValue) {
     useOSCORE.value = true;
-    oscore.value = JSON.parse(JSON.stringify(oscoreValue));
+    oscoreState.value = JSON.parse(JSON.stringify(oscoreValue));
   } else {
     useOSCORE.value = false;
-    oscore.value = undefined;
+    oscoreState.value = undefined;
   }
 }
 
@@ -147,11 +147,14 @@ function initOscore(oscoreValue) {
 function initTls(tlsValue) {
   if (tlsValue) {
     useDTLS.value = true;
-    tls.value = JSON.parse(JSON.stringify(tlsValue));
+    tlsState.value = {
+      ...JSON.parse(JSON.stringify(tlsValue)),
+      details: { ...(tlsValue.details || {}) },
+    };
     tlsMode.value = tlsValue.mode || 'psk';
   } else {
     useDTLS.value = false;
-    tls.value = undefined;
+    tlsState.value = undefined;
   }
 }
 
@@ -195,8 +198,8 @@ function exclusifTlsOrOSCORE() {
  */
 function updateTlsMode(value) {
   tlsMode.value = value;
-  tls.value.mode = value;
-  emit('update:tls', { ...tls.value, mode: value });
+  tlsState.value.mode = value;
+  emit('update:tls', { ...tlsState.value, mode: value });
 }
 
 // Initialize on mount
@@ -213,11 +216,11 @@ watch(() => props.oscore, (newVal) => {
 }, { deep: true });
 
 // Watch for internal changes
-watch(tls, (newVal) => {
+watch(tlsState, (newVal) => {
   emit('update:tls', newVal);
 }, { deep: true });
 
-watch(oscore, (newVal) => {
+watch(oscoreState, (newVal) => {
   emit('update:oscore', newVal);
 }, { deep: true });
 </script>

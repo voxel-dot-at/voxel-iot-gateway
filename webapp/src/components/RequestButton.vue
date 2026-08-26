@@ -14,8 +14,8 @@
   <v-badge :color="state" dot bottom overlap :title="details" :value="state">
     <v-btn
       class="ma-1"
-      small
-      tile
+      size="small"
+      variant="text"
       min-width="0"
       elevation="0"
       :title="title"

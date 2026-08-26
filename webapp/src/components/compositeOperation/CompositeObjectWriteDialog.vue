@@ -52,10 +52,10 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <!-- dialog buttons-->
-        <v-btn text @click="write">
+        <v-btn variant="text" @click="write">
           Write
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>

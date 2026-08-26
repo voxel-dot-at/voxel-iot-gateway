@@ -65,13 +65,13 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          text
+          variant="text"
           @click="$emit(editMode ? 'edit' : 'new', compositeObject)"
           :disabled="!valid"
         >
           {{ editMode ? "Save" : "Add" }}
         </v-btn>
-        <v-btn text @click="show = false">
+        <v-btn variant="text" @click="show = false">
           Cancel
         </v-btn>
       </v-card-actions>
