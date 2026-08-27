@@ -87,7 +87,9 @@ public class SimpleIoTGateway {
             // Simulate gateway running
             try {
                 while (true) {
-                    System.out.println("Gateway running... Press Ctrl+C to stop. mqtt: " + mqttServer.isConnected() + " web: " + webServer.isRunning() );
+                    int deviceCount = deviceAdapter.getDeviceCount();
+                    int onlineCount = deviceAdapter.getOnlineDeviceCount();
+                    System.out.println("Gateway running... Press Ctrl+C to stop. mqtt: " + mqttServer.isConnected() + " web: " + webServer.isRunning() + " devices: " + deviceCount + " (" + onlineCount + " online)");
                     
                     TimeUnit.MINUTES.sleep(1);
                 }

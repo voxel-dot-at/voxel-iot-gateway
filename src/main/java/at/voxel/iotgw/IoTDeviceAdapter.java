@@ -98,6 +98,15 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
     }
 
     /**
+     * Get the number of online devices (awake or registered)
+     */
+    public int getOnlineDeviceCount() {
+        return (int) regInfo.values().stream()
+            .filter(reg -> reg.regState == RegState.awake || reg.regState == RegState.registered)
+            .count();
+    }
+
+    /**
      * handle device registration - subscribe to device updates interesting to us.
      *
      * @param registration
