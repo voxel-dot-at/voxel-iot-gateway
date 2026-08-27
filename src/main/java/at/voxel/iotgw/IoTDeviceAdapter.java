@@ -496,9 +496,9 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                     // Publish to MQTT
                     String topic = TOPIC + "/" + endpoint + "/resp";
                     String jsonPayload = objectMapper.writeValueAsString(payload);
+                    LOG.info("MQTT message body: {}", jsonPayload);
                     broker.publish(topic, jsonPayload);
                     LOG.info("Published response value to MQTT topic: {}", topic);
-                    LOG.debug("Payload: {}", jsonPayload);
                     
                 } catch (JsonProcessingException e) {
                     LOG.warn("Failed to serialize response value for endpoint: {}", endpoint, e);
@@ -561,9 +561,9 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                     // Publish to MQTT
                     String topic = TOPIC + "/" + endpoint + "/resp";
                     String jsonPayload = objectMapper.writeValueAsString(payload);
+                    LOG.info("MQTT message body: {}", jsonPayload);
                     broker.publish(topic, jsonPayload);
                     LOG.info("Published composite response values to MQTT topic: {}", topic);
-                    LOG.debug("Payload: {}", jsonPayload);
                     
                 } catch (JsonProcessingException e) {
                     LOG.warn("Failed to serialize composite response values for endpoint: {}", endpoint, e);
