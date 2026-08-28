@@ -137,9 +137,10 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
 
         Map<Integer, Version> m = registration.getSupportedObject();
         Set<Integer> keys = m.keySet();
-        LOG.debug("Supported objects count: {}", keys.size());
-        for (int i = 0; i < keys.size(); i++) {
-            LOG.debug("Supported object: {}", keys.toArray()[i]);
+        LOG.info("Supported objects count: {}", keys.size());
+        for (Integer objId : keys) {
+            String fullPath = "/" + objId + "/0";
+            LOG.info("Supported object path: {}", fullPath);
         }
 
         Map<String, String> att = registration.getAdditionalRegistrationAttributes();
