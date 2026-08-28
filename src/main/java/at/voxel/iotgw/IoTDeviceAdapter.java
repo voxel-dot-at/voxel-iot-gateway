@@ -143,6 +143,19 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             LOG.info("Supported object path: {}", fullPath);
         }
 
+        // Print supported observations
+        if (previousObservations != null && !previousObservations.isEmpty()) {
+            LOG.info("Previous observations count: {}", previousObservations.size());
+            for (org.eclipse.leshan.core.observation.Observation obs : previousObservations) {
+                LOG.info("Observation ID: {}", obs.getId());
+                LOG.info("Observation Registration ID: {}", obs.getRegistrationId());
+                LOG.info("Observation Context: {}", obs.getContext());
+                LOG.info("Observation Protocol Data: {}", obs.getProtocolData());
+            }
+        } else {
+            LOG.info("No previous observations");
+        }
+
         Map<String, String> att = registration.getAdditionalRegistrationAttributes();
         Object[] atts = att.keySet().toArray();
         LOG.debug("Additional attributes count: {}", atts.length);
