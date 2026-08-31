@@ -143,6 +143,32 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             LOG.info("Supported object path: {}", fullPath);
         }
 
+        // Observe all available object paths
+        Set<org.eclipse.leshan.core.node.LwM2mPath> availablePaths = registration.getAvailableInstances();
+        if (availablePaths != null && !availablePaths.isEmpty()) {
+            LOG.info("Available paths count: {}", availablePaths.size());
+            for (org.eclipse.leshan.core.node.LwM2mPath path : availablePaths) {
+                try {
+                    LOG.info("Sending ObserveRequest for path: {}", path.toString());
+                    ObserveResponse oresp = server.send(registration, new ObserveRequest(path));
+                    if (oresp.isSuccess()) {
+                        LOG.info("Observation started for path: {} - Success", path.toString());
+                    } else {
+                        LOG.warn("Observation failed for path: {} - Code: {}, Error: {}", 
+                            path.toString(), oresp.getCode(), oresp.getErrorMessage());
+                    }
+                } catch (InterruptedException e) {
+                    LOG.warn("Interrupted while observing path: {}", path.toString(), e);
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (Exception e) {
+                    LOG.warn("Failed to observe path: {}", path.toString(), e);
+                }
+            }
+        } else {
+            LOG.info("No available paths to observe");
+        }
+
         // Print supported observations
         if (previousObservations != null && !previousObservations.isEmpty()) {
             LOG.info("Previous observations count: {}", previousObservations.size());
