@@ -519,17 +519,49 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                     obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
                     payload.set("observation", obsNode);
                     
-                    // Value data - cast to LwM2mResource to get the value
+                    // Value data - handle different LwM2m node types
                     com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
                     valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
                     valueNode.put("type", content.getClass().getSimpleName());
                     
                     if (content instanceof org.eclipse.leshan.core.node.LwM2mResource) {
+                        // Single resource - get its value directly
                         org.eclipse.leshan.core.node.LwM2mResource resource = (org.eclipse.leshan.core.node.LwM2mResource) content;
                         Object value = resource.getValue();
                         valueNode.put("value", value != null ? value.toString() : "null");
+                        LOG.info("Resource value: {}", value != null ? value.toString() : "null");
+                    } else if (content instanceof org.eclipse.leshan.core.node.LwM2mObjectInstance) {
+                        // Object instance - extract resources
+                        org.eclipse.leshan.core.node.LwM2mObjectInstance objInstance = (org.eclipse.leshan.core.node.LwM2mObjectInstance) content;
+                        com.fasterxml.jackson.databind.node.ObjectNode resourcesNode = objectMapper.createObjectNode();
+                        for (org.eclipse.leshan.core.node.LwM2mResource resource : objInstance.getResources().values()) {
+                            Object value = resource.getValue();
+                            resourcesNode.put(String.valueOf(resource.getId()), 
+                                value != null ? value.toString() : "null");
+                            LOG.info("Resource {} value: {}", resource.getId(), 
+                                value != null ? value.toString() : "null");
+                        }
+                        valueNode.set("resources", resourcesNode);
+                        valueNode.put("value", "[ObjectInstance with " + objInstance.getResources().size() + " resources]");
+                    } else if (content instanceof org.eclipse.leshan.core.node.LwM2mObject) {
+                        // Object - extract instances
+                        org.eclipse.leshan.core.node.LwM2mObject obj = (org.eclipse.leshan.core.node.LwM2mObject) content;
+                        com.fasterxml.jackson.databind.node.ObjectNode instancesNode = objectMapper.createObjectNode();
+                        for (org.eclipse.leshan.core.node.LwM2mObjectInstance instance : obj.getInstances().values()) {
+                            com.fasterxml.jackson.databind.node.ObjectNode instanceResources = objectMapper.createObjectNode();
+                            for (org.eclipse.leshan.core.node.LwM2mResource resource : instance.getResources().values()) {
+                                Object value = resource.getValue();
+                                instanceResources.put(String.valueOf(resource.getId()),
+                                    value != null ? value.toString() : "null");
+                            }
+                            instancesNode.put(String.valueOf(instance.getId()), instanceResources);
+                        }
+                        valueNode.set("instances", instancesNode);
+                        valueNode.put("value", "[Object with " + obj.getInstances().size() + " instances]");
                     } else {
-                        valueNode.put("value", "null");
+                        // Fallback - try to get string representation
+                        valueNode.put("value", content.toString());
+                        LOG.info("Content toString: {}", content.toString());
                     }
                     payload.set("value", valueNode);
                     
@@ -591,8 +623,37 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                             org.eclipse.leshan.core.node.LwM2mResource resource = (org.eclipse.leshan.core.node.LwM2mResource) node;
                             Object value = resource.getValue();
                             valueNode.put("value", value != null ? value.toString() : "null");
+                            LOG.info("Composite resource {} value: {}", path.toString(), 
+                                value != null ? value.toString() : "null");
+                        } else if (node instanceof org.eclipse.leshan.core.node.LwM2mObjectInstance) {
+                            org.eclipse.leshan.core.node.LwM2mObjectInstance objInstance = (org.eclipse.leshan.core.node.LwM2mObjectInstance) node;
+                            com.fasterxml.jackson.databind.node.ObjectNode resourcesNode = objectMapper.createObjectNode();
+                            for (org.eclipse.leshan.core.node.LwM2mResource resource : objInstance.getResources().values()) {
+                                Object value = resource.getValue();
+                                resourcesNode.put(String.valueOf(resource.getId()),
+                                    value != null ? value.toString() : "null");
+                                LOG.info("Composite resource {} value: {}", resource.getId(),
+                                    value != null ? value.toString() : "null");
+                            }
+                            valueNode.set("resources", resourcesNode);
+                            valueNode.put("value", "[ObjectInstance with " + objInstance.getResources().size() + " resources]");
+                        } else if (node instanceof org.eclipse.leshan.core.node.LwM2mObject) {
+                            org.eclipse.leshan.core.node.LwM2mObject obj = (org.eclipse.leshan.core.node.LwM2mObject) node;
+                            com.fasterxml.jackson.databind.node.ObjectNode instancesNode = objectMapper.createObjectNode();
+                            for (org.eclipse.leshan.core.node.LwM2mObjectInstance instance : obj.getInstances().values()) {
+                                com.fasterxml.jackson.databind.node.ObjectNode instanceResources = objectMapper.createObjectNode();
+                                for (org.eclipse.leshan.core.node.LwM2mResource resource : instance.getResources().values()) {
+                                    Object value = resource.getValue();
+                                    instanceResources.put(String.valueOf(resource.getId()),
+                                        value != null ? value.toString() : "null");
+                                }
+                                instancesNode.put(String.valueOf(instance.getId()), instanceResources);
+                            }
+                            valueNode.set("instances", instancesNode);
+                            valueNode.put("value", "[Object with " + obj.getInstances().size() + " instances]");
                         } else {
-                            valueNode.put("value", "null");
+                            valueNode.put("value", node.toString());
+                            LOG.info("Composite content toString: {}", node.toString());
                         }
                         valuesNode.set(path.toString(), valueNode);
                     }
