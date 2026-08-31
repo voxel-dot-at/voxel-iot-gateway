@@ -509,23 +509,70 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
             if (content != null) {
                 LOG.info("Content type: {}", content.getClass().getSimpleName());
                 
-                // Build JSON payload with observation and value data
+                // Publish one MQTT message per resource
                 try {
-                    com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
-                    
-                    // Observation details
-                    com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
-                    obsNode.put("id", observation.getId().toString());
-                    obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
-                    payload.set("observation", obsNode);
-                    
-                    // Value data - handle different LwM2m node types
-                    com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
-                    valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
-                    valueNode.put("type", content.getClass().getSimpleName());
-                    
-                    if (content instanceof org.eclipse.leshan.core.node.LwM2mResource) {
-                        // Handle both single and multiple resources
+                    if (content instanceof org.eclipse.leshan.core.node.LwM2mObjectInstance) {
+                        // Object instance - send one message per resource
+                        org.eclipse.leshan.core.node.LwM2mObjectInstance objInstance = (org.eclipse.leshan.core.node.LwM2mObjectInstance) content;
+                        LOG.info("ObjectInstance with {} resources", objInstance.getResources().size());
+                        
+                        for (org.eclipse.leshan.core.node.LwM2mResource resource : objInstance.getResources().values()) {
+                            com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                            
+                            // Observation details
+                            com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                            obsNode.put("id", observation.getId().toString());
+                            obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                            payload.set("observation", obsNode);
+                            
+                            // Resource details
+                            com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
+                            valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                            valueNode.put("resourceId", resource.getId());
+                            valueNode.put("type", resource.getClass().getSimpleName());
+                            
+                            if (resource instanceof org.eclipse.leshan.core.node.LwM2mSingleResource) {
+                                org.eclipse.leshan.core.node.LwM2mSingleResource singleResource = (org.eclipse.leshan.core.node.LwM2mSingleResource) resource;
+                                Object value = singleResource.getValue();
+                                valueNode.put("value", value != null ? value.toString() : "null");
+                                LOG.info("Resource {} value: {}", resource.getId(), value != null ? value.toString() : "null");
+                            } else if (resource instanceof org.eclipse.leshan.core.node.LwM2mMultipleResource) {
+                                org.eclipse.leshan.core.node.LwM2mMultipleResource multiResource = (org.eclipse.leshan.core.node.LwM2mMultipleResource) resource;
+                                java.util.Map<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instances = multiResource.getInstances();
+                                com.fasterxml.jackson.databind.node.ObjectNode valuesNode = objectMapper.createObjectNode();
+                                for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instEntry : instances.entrySet()) {
+                                    Object value = instEntry.getValue().getValue();
+                                    valuesNode.put(String.valueOf(instEntry.getKey()), value != null ? value.toString() : "null");
+                                }
+                                valueNode.set("values", valuesNode);
+                                valueNode.put("value", "[MultipleResource with " + instances.size() + " values]");
+                                LOG.info("Resource {} values: {}", resource.getId(), instances);
+                            }
+                            
+                            payload.set("value", valueNode);
+                            
+                            // Publish to MQTT
+                            String topic = TOPIC + "/" + endpoint + "/resp";
+                            String jsonPayload = objectMapper.writeValueAsString(payload);
+                            LOG.info("MQTT message body: {}", jsonPayload);
+                            broker.publish(topic, jsonPayload);
+                            LOG.info("Published resource {} to MQTT topic: {}", resource.getId(), topic);
+                        }
+                    } else if (content instanceof org.eclipse.leshan.core.node.LwM2mResource) {
+                        // Single resource - send one message
+                        com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                        
+                        // Observation details
+                        com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                        obsNode.put("id", observation.getId().toString());
+                        obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                        payload.set("observation", obsNode);
+                        
+                        // Resource details
+                        com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
+                        valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                        valueNode.put("type", content.getClass().getSimpleName());
+                        
                         org.eclipse.leshan.core.node.LwM2mResource resource = (org.eclipse.leshan.core.node.LwM2mResource) content;
                         if (resource instanceof org.eclipse.leshan.core.node.LwM2mSingleResource) {
                             org.eclipse.leshan.core.node.LwM2mSingleResource singleResource = (org.eclipse.leshan.core.node.LwM2mSingleResource) resource;
@@ -536,45 +583,43 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                             org.eclipse.leshan.core.node.LwM2mMultipleResource multiResource = (org.eclipse.leshan.core.node.LwM2mMultipleResource) resource;
                             java.util.Map<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instances = multiResource.getInstances();
                             com.fasterxml.jackson.databind.node.ObjectNode valuesNode = objectMapper.createObjectNode();
-                            for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> entry : instances.entrySet()) {
-                                Object value = entry.getValue().getValue();
-                                valuesNode.put(String.valueOf(entry.getKey()), value != null ? value.toString() : "null");
+                            for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instEntry : instances.entrySet()) {
+                                Object value = instEntry.getValue().getValue();
+                                valuesNode.put(String.valueOf(instEntry.getKey()), value != null ? value.toString() : "null");
                             }
                             valueNode.set("values", valuesNode);
                             valueNode.put("value", "[MultipleResource with " + instances.size() + " values]");
                             LOG.info("MultipleResource values: {}", instances);
                         }
-                    } else if (content instanceof org.eclipse.leshan.core.node.LwM2mObjectInstance) {
-                        // Object instance - extract resources
-                        org.eclipse.leshan.core.node.LwM2mObjectInstance objInstance = (org.eclipse.leshan.core.node.LwM2mObjectInstance) content;
-                        com.fasterxml.jackson.databind.node.ObjectNode resourcesNode = objectMapper.createObjectNode();
-                        for (org.eclipse.leshan.core.node.LwM2mResource resource : objInstance.getResources().values()) {
-                            if (resource instanceof org.eclipse.leshan.core.node.LwM2mSingleResource) {
-                                org.eclipse.leshan.core.node.LwM2mSingleResource singleResource = (org.eclipse.leshan.core.node.LwM2mSingleResource) resource;
-                                Object value = singleResource.getValue();
-                                resourcesNode.put(String.valueOf(resource.getId()), 
-                                    value != null ? value.toString() : "null");
-                                LOG.info("Resource {} value: {}", resource.getId(), 
-                                    value != null ? value.toString() : "null");
-                            } else if (resource instanceof org.eclipse.leshan.core.node.LwM2mMultipleResource) {
-                                org.eclipse.leshan.core.node.LwM2mMultipleResource multiResource = (org.eclipse.leshan.core.node.LwM2mMultipleResource) resource;
-                                java.util.Map<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instances = multiResource.getInstances();
-                                com.fasterxml.jackson.databind.node.ObjectNode valuesNode = objectMapper.createObjectNode();
-                                for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> entry : instances.entrySet()) {
-                                    Object value = entry.getValue().getValue();
-                                    valuesNode.put(String.valueOf(entry.getKey()), value != null ? value.toString() : "null");
-                                }
-                                resourcesNode.set(String.valueOf(resource.getId()), valuesNode);
-                                LOG.info("Resource {} values: {}", resource.getId(), instances);
-                            }
-                        }
-                        valueNode.set("resources", resourcesNode);
-                        valueNode.put("value", "[ObjectInstance with " + objInstance.getResources().size() + " resources]");
+                        
+                        payload.set("value", valueNode);
+                        
+                        // Publish to MQTT
+                        String topic = TOPIC + "/" + endpoint + "/resp";
+                        String jsonPayload = objectMapper.writeValueAsString(payload);
+                        LOG.info("MQTT message body: {}", jsonPayload);
+                        broker.publish(topic, jsonPayload);
+                        LOG.info("Published response value to MQTT topic: {}", topic);
                     } else if (content instanceof org.eclipse.leshan.core.node.LwM2mObject) {
-                        // Object - extract instances
+                        // Object - send one message per instance
                         org.eclipse.leshan.core.node.LwM2mObject obj = (org.eclipse.leshan.core.node.LwM2mObject) content;
-                        com.fasterxml.jackson.databind.node.ObjectNode instancesNode = objectMapper.createObjectNode();
+                        LOG.info("Object with {} instances", obj.getInstances().size());
+                        
                         for (org.eclipse.leshan.core.node.LwM2mObjectInstance instance : obj.getInstances().values()) {
+                            com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                            
+                            // Observation details
+                            com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                            obsNode.put("id", observation.getId().toString());
+                            obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                            payload.set("observation", obsNode);
+                            
+                            // Instance details
+                            com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
+                            valueNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                            valueNode.put("instanceId", instance.getId());
+                            valueNode.put("type", "LwM2mObjectInstance");
+                            
                             com.fasterxml.jackson.databind.node.ObjectNode instanceResources = objectMapper.createObjectNode();
                             for (org.eclipse.leshan.core.node.LwM2mResource resource : instance.getResources().values()) {
                                 if (resource instanceof org.eclipse.leshan.core.node.LwM2mSingleResource) {
@@ -582,34 +627,52 @@ public class IoTDeviceAdapter implements RegistrationListener, ObservationListen
                                     Object value = singleResource.getValue();
                                     instanceResources.put(String.valueOf(resource.getId()),
                                         value != null ? value.toString() : "null");
+                                    LOG.info("Instance {} Resource {} value: {}", instance.getId(), resource.getId(),
+                                        value != null ? value.toString() : "null");
                                 } else if (resource instanceof org.eclipse.leshan.core.node.LwM2mMultipleResource) {
                                     org.eclipse.leshan.core.node.LwM2mMultipleResource multiResource = (org.eclipse.leshan.core.node.LwM2mMultipleResource) resource;
                                     java.util.Map<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instances = multiResource.getInstances();
                                     com.fasterxml.jackson.databind.node.ObjectNode valuesNode = objectMapper.createObjectNode();
-                                    for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> entry : instances.entrySet()) {
-                                        Object value = entry.getValue().getValue();
-                                        valuesNode.put(String.valueOf(entry.getKey()), value != null ? value.toString() : "null");
+                                    for (java.util.Map.Entry<Integer, org.eclipse.leshan.core.node.LwM2mResourceInstance> instEntry : instances.entrySet()) {
+                                        Object value = instEntry.getValue().getValue();
+                                        valuesNode.put(String.valueOf(instEntry.getKey()), value != null ? value.toString() : "null");
                                     }
                                     instanceResources.set(String.valueOf(resource.getId()), valuesNode);
+                                    LOG.info("Instance {} Resource {} values: {}", instance.getId(), resource.getId(), instances);
                                 }
                             }
-                            instancesNode.put(String.valueOf(instance.getId()), instanceResources);
+                            valueNode.set("resources", instanceResources);
+                            valueNode.put("value", "[ObjectInstance with " + instance.getResources().size() + " resources]");
+                            
+                            payload.set("value", valueNode);
+                            
+                            // Publish to MQTT
+                            String topic = TOPIC + "/" + endpoint + "/resp";
+                            String jsonPayload = objectMapper.writeValueAsString(payload);
+                            LOG.info("MQTT message body: {}", jsonPayload);
+                            broker.publish(topic, jsonPayload);
+                            LOG.info("Published instance {} to MQTT topic: {}", instance.getId(), topic);
                         }
-                        valueNode.set("instances", instancesNode);
-                        valueNode.put("value", "[Object with " + obj.getInstances().size() + " instances]");
                     } else {
                         // Fallback - try to get string representation
+                        com.fasterxml.jackson.databind.node.ObjectNode payload = objectMapper.createObjectNode();
+                        com.fasterxml.jackson.databind.node.ObjectNode obsNode = objectMapper.createObjectNode();
+                        obsNode.put("id", observation.getId().toString());
+                        obsNode.put("path", observation.getPath() != null ? observation.getPath().toString() : "null");
+                        payload.set("observation", obsNode);
+                        
+                        com.fasterxml.jackson.databind.node.ObjectNode valueNode = objectMapper.createObjectNode();
                         valueNode.put("value", content.toString());
                         LOG.info("Content toString: {}", content.toString());
+                        
+                        payload.set("value", valueNode);
+                        
+                        String topic = TOPIC + "/" + endpoint + "/resp";
+                        String jsonPayload = objectMapper.writeValueAsString(payload);
+                        LOG.info("MQTT message body: {}", jsonPayload);
+                        broker.publish(topic, jsonPayload);
+                        LOG.info("Published response value to MQTT topic: {}", topic);
                     }
-                    payload.set("value", valueNode);
-                    
-                    // Publish to MQTT
-                    String topic = TOPIC + "/" + endpoint + "/resp";
-                    String jsonPayload = objectMapper.writeValueAsString(payload);
-                    LOG.info("MQTT message body: {}", jsonPayload);
-                    broker.publish(topic, jsonPayload);
-                    LOG.info("Published response value to MQTT topic: {}", topic);
                     
                 } catch (JsonProcessingException e) {
                     LOG.warn("Failed to serialize response value for endpoint: {}", endpoint, e);
