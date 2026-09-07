@@ -19,6 +19,15 @@ This project includes the following key dependencies:
 
 ## Building
 
+Prerequisites: you need to build leshan first and add the packages to the local Maven cache:
+
+```bash
+cd <leshan>
+mvn compile
+mvn package
+mvn install
+```
+
 To build the project, run:
 
 ```bash
